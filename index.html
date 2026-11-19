@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1fa085">
+<title>Ma28iyyah · Maziyyah Generation</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Archivo+Black&family=Noto+Sans+KR:wght@500;700&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff6e0;--card:#fff;--ink:#111;--bd:#111;--sh:#111;--acc:#1fa085;--on:#fff;--mute:#444;
+--o:#ff8a3d;--b:#5ab0ff;--y:#ffd84d;--l:#c8f169;--p:#c9b6ff;--r:8px;
+--f:"Space Grotesk","Noto Sans KR","Noto Sans JP",system-ui,sans-serif;--fh:"Archivo Black","Noto Sans KR","Noto Sans JP",system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--f);background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:24px 24px;background-attachment:fixed;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+[hidden]{display:none!important}
+button,input,textarea,select{font:inherit;color:var(--ink)}
+.box{background:var(--card);border:3px solid var(--bd);box-shadow:6px 6px 0 var(--sh);border-radius:var(--r)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px}
+.col{max-width:640px;margin:0 auto}
+.lg{display:block;aspect-ratio:111/152;height:auto;--lw:2.4}
+h1,h2,h3{font-family:var(--fh);text-transform:uppercase;margin:0}
+h2{display:inline-block;font-size:clamp(20px,5vw,30px);margin:0 0 18px;padding:2px 14px;border:3px solid var(--bd);border-radius:var(--r);box-shadow:5px 5px 0 var(--sh);background:var(--y);color:#111;transform:rotate(-1deg)}
+section{padding:26px 0}
+/* tombol & input */
+.btn{font-weight:700;border:3px solid var(--bd);border-radius:var(--r);background:var(--y);color:#111;padding:8px 18px;box-shadow:4px 4px 0 var(--sh);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--sh)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.p{background:var(--acc);color:var(--on)}.btn.b{background:var(--b)}.btn.l{background:var(--l)}.btn.o{background:var(--o)}.btn.s{font-size:13px;padding:4px 12px;box-shadow:3px 3px 0 var(--sh)}
+input,textarea,select{width:100%;border:3px solid var(--bd);background:var(--card);padding:9px 12px;margin:5px 0;border-radius:var(--r)}
+.pw{position:relative}.pw input{padding-right:48px}
+.eye{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:none;cursor:pointer;display:grid;place-items:center;color:var(--ink);padding:0}
+.eye .ic{width:22px;height:22px}
+input[type=color]{padding:2px;height:46px;cursor:pointer}
+input[type=file]{display:none}
+:focus-visible{outline:3px solid var(--o);outline-offset:2px}
+.err{color:#d12d12;font-weight:700;min-height:22px}
+.meta{font-size:12px;color:var(--mute)}
+.note{background:var(--y);color:#111;border:3px solid var(--bd);border-radius:var(--r);padding:10px 14px;margin-bottom:14px}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+hr{border:0;border-top:3px solid var(--bd);margin:14px 0}
+/* boot & login */
+#boot{min-height:100svh;display:grid;place-items:center;font:700 20px var(--fh)}
+#auth{min-height:100svh;display:grid;place-items:center;padding:20px}
+.alang{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:12px;width:auto}
+.login{width:min(100%,420px);padding:28px 24px;text-align:center}
+.login .lg{width:104px;margin:0 auto 14px}
+.login h1{font-size:clamp(26px,7vw,34px);line-height:1.05;margin-bottom:10px}
+.login h1 span{background:var(--acc);color:var(--on);padding:0 8px;border:3px solid var(--bd);display:inline-block;transform:rotate(-2deg);box-shadow:4px 4px 0 var(--sh);margin-top:6px}
+.stk{display:inline-block;background:var(--p);color:#111;font-weight:700;font-size:13px;padding:3px 14px;border:3px solid var(--bd);border-radius:var(--r);box-shadow:3px 3px 0 var(--sh);transform:rotate(1.5deg);margin-bottom:18px}
+.login form{text-align:left}
+.login .btn{width:100%;justify-content:center;margin-top:8px;padding:11px}
+/* header */
+.top{position:sticky;top:0;z-index:20;background:var(--acc);color:var(--on);border-bottom:3px solid var(--bd);padding-top:env(safe-area-inset-top,0)}
+.top .row{display:flex;align-items:center;gap:10px;padding:8px 14px;max-width:1020px;margin:0 auto}
+.top .lg{width:34px;--lw:3.4}
+.brand{font:20px var(--fh);letter-spacing:.5px;margin-right:auto}
+.top select{width:auto;margin:0;padding:5px 8px;font-size:13px;font-weight:700;box-shadow:3px 3px 0 var(--sh);color:#111;background:#fff}
+.top .av{width:40px;height:40px;cursor:pointer;border:3px solid var(--bd);box-shadow:3px 3px 0 var(--sh)}
+.tabs{display:flex;gap:8px;padding:0 14px 10px;overflow-x:auto;max-width:1020px;margin:0 auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;text-decoration:none;color:#111;font-weight:700;font-size:14px;padding:4px 14px;border:3px solid #111;border-radius:var(--r);background:#fff;box-shadow:3px 3px 0 #111;display:inline-flex;gap:6px;align-items:center}
+.tab[aria-current=page]{background:var(--y);transform:translate(2px,2px);box-shadow:1px 1px 0 #111}
+.bdg{background:#e11d48;color:#fff;font:700 11px/1 var(--f);padding:3px 6px;border-radius:99px;border:2px solid #111;font-style:normal}
+.mq{background:var(--y);color:#111;border-block:3px solid var(--bd);overflow:hidden;white-space:nowrap;font:16px var(--fh);padding:4px 0}
+.mq div{display:inline-block;animation:mq 26s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.mq div{animation:none}html{scroll-behavior:auto}}
+/* avatar */
+.av{width:44px;height:44px;border:3px solid var(--bd);border-radius:50%;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;font-weight:700;overflow:hidden;flex:none;padding:0}
+.av img{width:100%;height:100%;object-fit:cover}.av.xl{width:112px;height:112px;font-size:42px;margin:0 auto 10px}
+.who{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.who span{display:flex;flex-direction:column;line-height:1.25}
+/* composer & feed */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}
+.chips button{white-space:nowrap;font-weight:700;font-size:13px;padding:3px 12px;border:3px solid var(--bd);border-radius:var(--r);background:var(--card);cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--acc);color:var(--on);box-shadow:3px 3px 0 var(--sh)}
+.comp{padding:14px;margin-bottom:18px}
+.comp .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.comp select{width:auto;margin:0}
+.prev{position:relative;margin:8px 0;border:3px solid var(--bd);border-radius:var(--r);overflow:hidden;background:#000}
+.prev img,.prev video{display:block;width:100%;max-height:300px;object-fit:contain}
+.prev button{position:absolute;top:6px;right:6px}
+.post{padding:14px;margin-bottom:18px;color:#111}
+.post:nth-child(3n+1){background:#d6f3ea}.post:nth-child(3n+2){background:#ffe1cc}.post:nth-child(3n){background:#e4dbff}
+.post .meta{color:#333}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.post .who{color:#111}
+.chip{display:inline-block;background:#111;color:#fff;font-weight:700;font-size:12px;padding:1px 10px;border-radius:var(--r)}
+.post h3{font-size:19px;margin:10px 0 2px}
+.post p{white-space:pre-wrap;margin:8px 0 0;overflow-wrap:anywhere}
+.media{display:block;width:100%;max-height:560px;object-fit:cover;margin-top:10px;border:3px solid #111;border-radius:var(--r);background:#000}
+video.media{object-fit:contain}
+.acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.act{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:#111;background:#fff;border:3px solid #111;border-radius:var(--r);padding:3px 10px;cursor:pointer;box-shadow:3px 3px 0 #111}
+.act:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #111}
+.act.on{background:var(--y)}.act.lk.on{background:#ffc2cf}.act.lk.on .ic,.act.sv.on .ic{fill:#111}
+.act.del{margin-left:auto;background:#ffd2d2}
+.cm{margin-top:12px;border-top:3px solid #111;padding-top:10px}
+.c{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px}
+.c .av{width:32px;height:32px;font-size:13px}.c>div{flex:1;min-width:0;overflow-wrap:anywhere}
+.c .x{background:none;border:0;font:700 20px/1 var(--f);cursor:pointer;color:#111}
+.cf{display:flex;gap:8px}.cf input{margin:0;background:#fff;color:#111}
+/* alumni & struktur */
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:6px 0 16px}
+.tools input{flex:1;min-width:200px;margin:0}
+.names{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.names button{display:flex;align-items:center;gap:10px;text-align:left;font-weight:700;color:#111;border:3px solid var(--bd);border-radius:var(--r);padding:8px 12px;box-shadow:4px 4px 0 var(--sh);cursor:pointer}
+.names button:nth-child(5n+1){background:var(--l)}.names button:nth-child(5n+2){background:#ffd2b0}.names button:nth-child(5n+3){background:#c3e1ff}.names button:nth-child(5n+4){background:var(--y)}.names button:nth-child(5n){background:var(--p)}
+.names button:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--sh)}
+.names .av{width:36px;height:36px;font-size:14px}
+.chart{display:flex;flex-direction:column;align-items:center}
+.node{padding:16px 20px;width:100%;max-width:480px;color:#111}
+.node h3{font-size:19px;margin:0 0 10px;display:inline-block;padding:0 12px;border:3px solid #111;border-radius:var(--r);background:#fff}
+.node.k{background:var(--o)}.node.b{background:var(--b)}.node.s{background:var(--l)}
+.pp{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff6;border:0;padding:4px;border-radius:var(--r);cursor:pointer;color:#111;font-weight:700;margin:2px 0}
+.pp:hover{background:#fff}
+.stem{width:4px;height:34px;background:var(--bd)}
+.kids{display:grid;grid-template-columns:1fr 1fr;gap:24px;position:relative;width:100%}
+.kids::before{content:"";position:absolute;top:0;left:25%;right:25%;border-top:4px solid var(--bd)}
+.kids .node{position:relative;margin:34px auto 0}
+.kids .node::before{content:"";position:absolute;top:-38px;left:50%;width:4px;height:38px;background:var(--bd);transform:translateX(-50%)}
+.prof{padding:22px;background:var(--l);color:#111}.prof p{margin:0 0 12px}
+.prof .k{background:#fff;font-weight:700;padding:8px 14px;border:3px solid #111;border-radius:var(--r);display:inline-block;margin-top:6px}
+.social{display:flex;gap:12px;margin-top:18px}
+.social a{width:50px;height:50px;display:flex;align-items:center;justify-content:center;border:3px solid var(--bd);border-radius:var(--r);box-shadow:4px 4px 0 var(--sh);color:#111}
+.social a:nth-child(1){background:var(--acc);color:var(--on)}.social a:nth-child(2){background:var(--o)}.social a:nth-child(3){background:var(--b)}
+.social svg{width:26px;height:26px}
+/* pesan */
+.row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;margin-bottom:12px;cursor:pointer;color:var(--ink)}
+.row .tx{flex:1;min-width:0}.row .tx b,.row .tx small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat{padding:0;overflow:hidden}
+.chat .hd{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:3px solid var(--bd);background:var(--acc);color:var(--on)}
+.chat .hd .who{color:var(--on)}
+.bubbles{height:min(56vh,480px);overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.bb{max-width:80%;padding:7px 12px;border:3px solid var(--bd);border-radius:var(--r);overflow-wrap:anywhere;white-space:pre-wrap}
+.bb small{display:block;font-size:11px;opacity:.7;text-align:right}
+.bb.me{align-self:flex-end;background:var(--y);color:#111;box-shadow:3px 3px 0 var(--sh)}
+.bb.th{align-self:flex-start;background:var(--card)}
+.chat form{display:flex;gap:8px;padding:10px;border-top:3px solid var(--bd)}.chat form input{margin:0}
+.row.new{background:var(--y);color:#111}.row.new .meta{color:#333}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;max-width:90vw;background:var(--y);color:#111;font-weight:700;padding:10px 16px;border:3px solid var(--bd);border-radius:var(--r);box-shadow:5px 5px 0 var(--sh)}
+/* dialog */
+dialog{border:3px solid var(--bd);border-radius:var(--r);box-shadow:8px 8px 0 var(--sh);background:var(--card);color:var(--ink);padding:20px;width:min(92vw,440px);max-height:90svh}
+dialog::backdrop{background:#000a}
+dialog h3{font-size:21px;margin-bottom:10px}
+.sw{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 8px}
+.sw button{width:34px;height:34px;border:3px solid var(--bd);border-radius:var(--r);cursor:pointer;box-shadow:2px 2px 0 var(--sh);padding:0}
+.lab{font-weight:700;font-size:14px;display:block;margin-top:8px}
+@media (max-width:700px){.kids{grid-template-columns:1fr}.kids::before{display:none}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs><path id="lgp" d="M27.9 58.1 L27.9 129.4 L51.8 142.4 L73.4 129.6 L74.3 58.3 L51.5 72.0 L51.8 90.1 L62.3 83.7 L62.0 124.1 L51.5 130.5 L41.6 124.7 L41.6 66.3Z M99.9 32.8 L85.8 23.8 L51.5 48.4 L15.0 23.9 L0.4 31.1 L0.0 118.5 L23.8 127.9 L24.1 113.8 L15.0 109.7 L15.3 41.9 L51.7 63.8 L84.7 40.9 L85.1 109.8 L77.3 113.7 L77.1 128.0 L99.3 117.5Z M75.0 15.5 L51.6 0.0 L25.9 15.4 L25.8 25.8 L41.0 36.0 L40.9 26.1 L51.6 16.9 L61.2 25.5 L61.0 36.3 L75.5 26.0Z"/></defs>
+<symbol id="lg" viewBox="-3 -3 111 152">
+<use href="#lgp" x="5" y="5" style="fill:var(--sh)"/>
+<use href="#lgp" style="fill:var(--acc);stroke:var(--bd);stroke-width:var(--lw,2.4);stroke-linejoin:miter"/>
+</symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5 6.5 5c2 0 3.5 1.1 5.5 3.1C14 6.1 15.5 5 17.5 5 21 5 22.8 8.6 21.5 11.8 19.5 16.4 12 21 12 21z"/></symbol>
+<symbol id="i-cmt" viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4z"/></symbol>
+<symbol id="i-mark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.5L6 21z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+<symbol id="i-img" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM3 17l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M3 11L21 3l-6 18-3-7z"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+</svg>
+
+<div class="toast" id="toast" hidden role="status"></div>
+<div id="boot" data-i18n="boot">Memuat…</div>
+
+<!-- ============ LOGIN ============ -->
+<div id="auth" hidden>
+<select class="alang" id="langA" aria-label="Bahasa"></select>
+<div class="box login">
+<svg class="lg" role="img" aria-label="Logo Maziyyah Generation"><use href="#lg"/></svg>
+<span class="stk">The Generation of Greatness</span>
+<h1 data-i18n-html="login_title"></h1>
+<form id="loginForm" autocomplete="on">
+<input id="lu" list="nl" data-ph="u_ph" autocomplete="username" autocapitalize="words" required><datalist id="nl"></datalist>
+<div class="pw"><input id="lp" type="password" data-ph="p_ph" autocomplete="current-password" required><button type="button" class="eye" data-eye="lp"></button></div>
+<div class="err" id="lerr" role="alert"></div>
+<button class="btn p" id="lgo" data-i18n="login_btn"></button>
+</form>
+<p class="meta" data-i18n="login_help"></p>
+</div>
+</div>
+
+<!-- ============ APLIKASI ============ -->
+<div id="app" hidden>
+<header class="top">
+<div class="row">
+<svg class="lg" aria-hidden="true"><use href="#lg"/></svg>
+<b class="brand">MA28IYYAH</b>
+<select id="langH" aria-label="Bahasa"></select>
+<button class="av" id="meBtn" aria-label="Akun"></button>
+</div>
+<nav class="tabs" id="tabs">
+<a class="tab" href="#home" data-tab="home"><span data-i18n="tab_home"></span></a>
+<a class="tab" href="#alumni" data-tab="alumni"><span data-i18n="tab_alumni"></span></a>
+<a class="tab" href="#msg" data-tab="msg"><span data-i18n="tab_msg"></span><i class="bdg" id="bdg" hidden></i></a>
+<a class="tab" href="#notif" data-tab="notif"><span data-i18n="tab_notif"></span><i class="bdg" id="nbdg" hidden></i></a>
+<a class="tab" href="#saved" data-tab="saved"><span data-i18n="tab_saved"></span></a>
+<a class="tab" href="#org" data-tab="org"><span data-i18n="tab_org"></span></a>
+<a class="tab" href="#about" data-tab="about"><span data-i18n="tab_about"></span></a>
+</nav>
+</header>
+<div class="mq" aria-hidden="true"><div id="mq"></div></div>
+
+<main class="wrap">
+<section data-view="home"><div class="col">
+<h2 data-i18n="feed_title"></h2>
+<div class="box comp">
+<span class="meta" id="asLbl"></span>
+<input id="pTitle" maxlength="120" data-ph="title_ph">
+<textarea id="pBody" rows="3" maxlength="2000" data-ph="compose_ph"></textarea>
+<div class="prev" id="prev" hidden></div>
+<div class="r">
+<label class="btn s" for="pFile" tabindex="0" id="pickBtn"><svg class="ic"><use href="#i-img"/></svg><span data-i18n="add_media"></span></label>
+<input type="file" id="pFile" accept="image/*,video/*">
+<select id="pCat" aria-label="Kategori"></select>
+<button class="btn p s" id="postBtn" style="margin-left:auto" data-i18n="post_btn"></button>
+</div>
+<div class="err" id="perr" role="alert"></div>
+</div>
+<div class="chips" id="chips"></div>
+<div id="feed"></div>
+<div style="text-align:center"><button class="btn" id="moreBtn" hidden data-i18n="more"></button></div>
+</div></section>
+
+<section data-view="notif" hidden><div class="col">
+<h2 data-i18n="notif_title"></h2>
+<div id="notifList"></div>
+</div></section>
+
+<section data-view="saved" hidden><div class="col">
+<h2 data-i18n="saved_title"></h2>
+<div id="savedList"></div>
+</div></section>
+
+<section data-view="alumni" hidden>
+<h2 data-i18n="alumni_title"></h2>
+<div class="note" id="dbnote" hidden data-i18n="db_err"></div>
+<div class="tools"><input id="q" data-ph="search_ph"><b id="cnt"></b></div>
+<div class="names" id="names"></div>
+</section>
+
+<section data-view="msg" hidden><div class="col">
+<h2 data-i18n="msg_title"></h2>
+<div id="msgList"></div>
+<div class="box chat" id="chat" hidden>
+<div class="hd"><button class="btn s" id="chatBack"><svg class="ic"><use href="#i-back"/></svg><span data-i18n="back"></span></button><span id="chatWho"></span></div>
+<div class="bubbles" id="bubbles" aria-live="polite"></div>
+<div class="err" id="chatErr" style="padding:0 12px" role="alert"></div>
+<form id="chatForm"><input id="chatIn" maxlength="1000" data-ph="msg_ph" required autocomplete="off"><button class="btn p s" aria-label="Kirim"><svg class="ic"><use href="#i-send"/></svg></button></form>
+</div>
+</div></section>
+
+<section data-view="org" hidden>
+<h2 data-i18n="org_title"></h2>
+<div class="chart" id="chart"></div>
+</section>
+
+<section data-view="about" hidden>
+<h2 data-i18n="about_title"></h2>
+<div class="box prof" id="aboutBox"></div>
+<div class="social" id="soc"></div>
+</section>
+</main>
+</div>
+
+<!-- ============ DIALOG ============ -->
+<dialog id="dView">
+<div class="av xl" id="vAv"></div>
+<h3 id="vName" style="text-align:center"></h3>
+<p id="vJob" style="text-align:center;font-weight:700;margin:0 0 4px"></p>
+<p id="vCnt" class="meta" style="text-align:center;margin:0 0 4px"></p>
+<p id="vFlag" class="meta" style="text-align:center;margin:0 0 8px"></p>
+<p id="vBio" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
+<div id="vAct" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px"></div>
+<p class="err" id="vErr" role="alert" style="min-height:0;font-size:13px;margin:0 0 8px"></p>
+<button class="btn" data-x data-i18n="close"></button>
+</dialog>
+
+<dialog id="dMe">
+<h3 data-i18n="acc_title"></h3>
+<div class="note" id="dpNote" hidden data-i18n="pw_note"></div>
+<div style="display:flex;gap:12px;align-items:center;margin:8px 0"><div class="av" id="meAv" style="width:70px;height:70px"></div><button class="btn b s" id="mePhoto" data-i18n="photo_btn"></button></div>
+<input id="meName" data-ph="name_ph" maxlength="60">
+<input id="meJob" data-ph="job_ph" maxlength="80">
+<textarea id="meBio" rows="3" data-ph="bio_ph" maxlength="300"></textarea>
+<button class="btn l s" id="saveProf" data-i18n="save_prof"></button>
+<hr>
+<button class="btn o s" id="brandBtn" data-i18n="brand_btn"></button>
+<hr>
+<div class="pw"><input id="np" type="password" data-ph="newpw_ph" autocomplete="new-password"><button type="button" class="eye" data-eye="np"></button></div><button class="btn s" id="savePw" data-i18n="change_pw"></button>
+<div class="err" id="merr" role="alert"></div>
+<hr>
+<button class="btn p" id="logout" data-i18n="logout"></button> <button class="btn" data-x data-i18n="close"></button>
+<input type="file" id="pf" accept="image/*">
+</dialog>
+
+<dialog id="dBrand">
+<h3 data-i18n="brand_title"></h3>
+<span class="lab" data-i18n="brand_accent"></span>
+<div class="sw" id="swA"></div>
+<input type="color" id="cA" aria-label="Warna aksen">
+<span class="lab" data-i18n="brand_bg"></span>
+<div class="sw" id="swB"></div>
+<input type="color" id="cB" aria-label="Warna latar">
+<p class="meta" data-i18n="brand_hint"></p>
+<div class="err" id="berr" role="alert"></div>
+<button class="btn p" id="bSave" data-i18n="brand_save"></button>
+<button class="btn s" id="bReset" data-i18n="brand_reset"></button>
+<button class="btn s" id="bCancel" data-i18n="cancel"></button>
+</dialog>
+
+<script>
+// ===== ISI DUA BARIS INI DARI SUPABASE (Project Settings > API) =====
+const SUPABASE_URL="https://cyzzvakzkdkfcivdqmnf.supabase.co";
+const SUPABASE_KEY="sb_publishable_LNljNroBDPuYVp89IAiNAg_oec2B_oc";
+// =====================================================================
+
+/* ---------- TERJEMAHAN ---------- */
+const LANGS=[["id","Bahasa Indonesia"],["en","English"],["ko","한국어"],["ja","日本語"],["su","Basa Sunda"],["jv","Basa Jawa"]];
+const LOC={id:"id-ID",en:"en-US",ko:"ko-KR",ja:"ja-JP",su:"id-ID",jv:"id-ID"};
+const I18N={
+id:{boot:"Memuat…",login_title:"Masuk ke <span>Ma28iyyah</span>",u_ph:"Username (nama lengkap)",p_ph:"Password",login_btn:"Masuk",login_help:"Lupa password? Hubungi pengurus Maziyyah.",err_name:"Username tidak ditemukan.",err_pass:"Password salah.",err_load:"Data belum termuat. Coba muat ulang halaman.",wait:"Memproses…",
+tab_home:"Beranda",tab_alumni:"Alumni",tab_org:"Struktur",tab_about:"Tentang",tab_msg:"Pesan",tab_saved:"Tersimpan",
+feed_title:"Maziyyah Update",compose_ph:"Bagikan sesuatu untuk angkatan…",title_ph:"Judul (opsional)",add_media:"Foto / Video",post_btn:"Posting",sending:"Mengirim…",posting_as:"Posting sebagai {n}",err_post:"Postingan belum bisa dikirim.",err_big:"Ukuran video maksimal 50 MB.",err_type:"Pilih file foto atau video yang didukung.",no_posts:"Belum ada postingan. Jadi yang pertama!",all:"Semua",
+c_edu:"Pendidikan",c_career:"Karir",c_work:"Dunia Kerja",c_fact:"Fakta",c_update:"Update",more:"Muat lebih banyak",
+act_like:"Suka",act_cmt:"Komentar",act_save:"Simpan",del:"Hapus",confirm_del:"Hapus postingan ini?",cm_ph:"Tulis komentar…",cm_send:"Kirim",no_cm:"Belum ada komentar.",cm_confirm:"Hapus komentar ini?",remove:"Buang",
+saved_title:"Postingan Tersimpan",no_saved:"Belum ada yang disimpan. Tekan ikon penanda di sebuah postingan.",
+alumni_title:"Alumni",search_ph:"Cari nama alumni",n_alumni:"{n} alumni",db_err:"Data alumni belum bisa dimuat.",
+org_title:"Struktur Organisasi",r_ketua:"Ketua",r_sekretaris:"Sekretaris",r_bendahara:"Bendahara",
+about_title:"Tentang Maziyyah",
+about:["Maziyyah Generation merupakan nama generasi yang berasal dari bahasa Arab, yaitu Al-Maziyyah, yang memiliki makna keunggulan, keistimewaan, dan kelebihan.","Nama ini diberikan oleh Almarhum Al-Maghfurlah Drs. K.H. Mu'tashim Billah, M.H.I., dengan harapan dan doa agar generasi ini tumbuh menjadi generasi yang memiliki keunggulan dalam ilmu pengetahuan, keluhuran akhlak, kepribadian, serta pengabdian kepada agama, masyarakat, dan bangsa.","Pemberian nama ini juga disertai doa dan harapan dari keluarga beliau serta para masyayikh Pondok Pesantren Darussalam Bogor. Nama tersebut bukan sekadar identitas, melainkan sebuah doa, pesan, dan amanah yang diharapkan senantiasa menjadi pedoman dalam perjalanan generasi ini.","Kehadiran Maziyyah Generation menjadi bagian dari perjalanan sejarah Pondok Pesantren Darussalam Bogor, yang bertepatan dengan momentum tiga dekade (30 tahun) berdirinya pondok pesantren. Sebuah perjalanan panjang yang penuh perjuangan, pengorbanan, pendidikan, dan pengabdian dalam mencetak generasi penerus umat.","Sebagai generasi santri, Maziyyah Generation diharapkan mampu meneruskan nilai-nilai kepesantrenan, menjaga tradisi keilmuan, menjunjung tinggi akhlak, serta mengembangkan potensi diri untuk menghadapi tantangan zaman. Setiap santri memiliki keistimewaan dan potensi masing-masing yang harus terus diasah, dikembangkan, dan diarahkan agar dapat memberikan manfaat bagi sesama.","Dengan membawa nama, doa, dan harapan tersebut, Maziyyah Generation bertekad untuk menjadi generasi yang tidak hanya unggul dalam pencapaian, tetapi juga kokoh dalam iman, luhur dalam akhlak, luas dalam wawasan, serta senantiasa mengabdikan diri bagi agama, almamater, masyarakat, dan bangsa."],
+follow:"Ikuti",following_btn:"Mengikuti ✓",n_followers:"pengikut",n_following:"mengikuti",follows_you:"Mengikutimu",send_dm:"Chat",dm_locked:"Saling ikuti dulu untuk bisa berkirim pesan.",no_prof:"Profil belum dilengkapi.",close:"Tutup",edit_profile:"Edit Profil",
+msg_title:"Pesan",msg_help:"Kamu hanya bisa berkirim pesan dengan alumni yang saling mengikuti denganmu.",no_friends:"Belum ada yang saling mengikuti. Buka tab Alumni, lalu ikuti teman-temanmu.",msg_ph:"Tulis pesan…",no_msgs:"Belum ada pesan. Sapa duluan!",back:"Kembali",not_mutual:"Kalian belum saling mengikuti, jadi pesan baru belum bisa dikirim.",err_send:"Pesan gagal terkirim.",you:"Kamu",
+acc_title:"Akun Saya",pw_note:"Password kamu masih bawaan. Ganti sekarang ya.",photo_btn:"Ganti Foto",name_ph:"Nama",job_ph:"Kesibukan, misal: Kuliah di UI atau Kerja di Bogor",bio_ph:"Tentang kamu (tampil ke semua alumni)",save_prof:"Simpan Profil",ok_saved:"Tersimpan.",err_save:"Gagal menyimpan.",newpw_ph:"Password baru (min. 6 karakter)",change_pw:"Ganti Password",pw_min:"Minimal 6 karakter.",pw_ok:"Password diganti.",err_pw:"Gagal mengganti password.",logout:"Keluar",photo_ok:"Foto tersimpan.",photo_err:"Foto gagal diunggah.",
+brand_btn:"Edit Branding",brand_title:"Edit Branding",brand_accent:"Warna aksen",brand_bg:"Warna latar",brand_reset:"Kembalikan bawaan",brand_save:"Simpan Branding",brand_ok:"Branding tersimpan.",brand_hint:"Warna ini hanya berlaku untuk akunmu.",cancel:"Batal",
+tab_notif:"Notifikasi",notif_title:"Notifikasi",notif_none:"Belum ada notifikasi.",notif_follow:"mulai mengikutimu",follow_back:"Ikuti Balik",waiting:"Menunggu diikuti balik untuk bisa chat.",err_follow:"Gagal memproses. Pastikan migration-v2.sql sudah dijalankan.",
+show_pw:"Tampilkan password",hide_pw:"Sembunyikan password",just_now:"baru saja",ago_m:"{n} menit lalu",ago_h:"{n} jam lalu",ago_d:"{n} hari lalu"},
+
+en:{boot:"Loading…",login_title:"Log into <span>Ma28iyyah</span>",u_ph:"Username (full name)",p_ph:"Password",login_btn:"Log in",login_help:"Forgot your password? Contact the Maziyyah committee.",err_name:"Username not found.",err_pass:"Wrong password.",err_load:"Data hasn't loaded. Please reload the page.",wait:"Working…",
+tab_home:"Home",tab_alumni:"Alumni",tab_org:"Structure",tab_about:"About",tab_msg:"Messages",tab_saved:"Saved",
+feed_title:"Maziyyah Update",compose_ph:"Share something with the batch…",title_ph:"Title (optional)",add_media:"Photo / Video",post_btn:"Post",sending:"Sending…",posting_as:"Posting as {n}",err_post:"Couldn't send your post.",err_big:"Videos can be 50 MB at most.",err_type:"Choose a supported photo or video file.",no_posts:"No posts yet. Be the first!",all:"All",
+c_edu:"Education",c_career:"Career",c_work:"Workplace",c_fact:"Facts",c_update:"Update",more:"Load more",
+act_like:"Like",act_cmt:"Comments",act_save:"Save",del:"Delete",confirm_del:"Delete this post?",cm_ph:"Write a comment…",cm_send:"Send",no_cm:"No comments yet.",cm_confirm:"Delete this comment?",remove:"Remove",
+saved_title:"Saved Posts",no_saved:"Nothing saved yet. Tap the bookmark icon on a post.",
+alumni_title:"Alumni",search_ph:"Search alumni by name",n_alumni:"{n} alumni",db_err:"Couldn't load the alumni data.",
+org_title:"Organization Structure",r_ketua:"Chairperson",r_sekretaris:"Secretary",r_bendahara:"Treasurer",
+about_title:"About Maziyyah",
+about:["Maziyyah Generation is the name of a generation that comes from the Arabic word Al-Maziyyah, meaning excellence, distinction, and advantage.","The name was given by the late Drs. K.H. Mu'tashim Billah, M.H.I. (may Allah forgive him), in the hope and prayer that this generation grows to excel in knowledge, noble character, personality, and service to religion, society, and the nation.","The name was also given with the prayers and hopes of his family and the masyayikh of Pondok Pesantren Darussalam Bogor. It is more than an identity: it is a prayer, a message, and a trust meant to guide this generation on its journey.","Maziyyah Generation is part of the history of Pondok Pesantren Darussalam Bogor, coinciding with three decades (30 years) since the pesantren was founded — a long journey of struggle, sacrifice, education, and service in raising the next generation of the ummah.","As a generation of santri, Maziyyah Generation is expected to carry on pesantren values, preserve the tradition of knowledge, uphold noble character, and develop their potential to face the challenges of the times. Every santri has their own distinction and potential that must keep being honed, developed, and directed so it benefits others.","Carrying this name, prayer, and hope, Maziyyah Generation is determined to be a generation that not only excels in achievement, but is also firm in faith, noble in character, broad in insight, and always devoted to religion, alma mater, society, and nation."],
+follow:"Follow",following_btn:"Following ✓",n_followers:"followers",n_following:"following",follows_you:"Follows you",send_dm:"Chat",dm_locked:"Follow each other first to send messages.",no_prof:"Profile not filled in yet.",close:"Close",edit_profile:"Edit Profile",
+msg_title:"Messages",msg_help:"You can only message alumni who follow you back.",no_friends:"No mutual follows yet. Open the Alumni tab and follow your friends.",msg_ph:"Write a message…",no_msgs:"No messages yet. Say hi!",back:"Back",not_mutual:"You don't follow each other, so new messages can't be sent.",err_send:"Message failed to send.",you:"You",
+acc_title:"My Account",pw_note:"You're still using the default password. Please change it.",photo_btn:"Change Photo",name_ph:"Name",job_ph:"What you're up to, e.g. Studying at UI or Working in Bogor",bio_ph:"About you (visible to all alumni)",save_prof:"Save Profile",ok_saved:"Saved.",err_save:"Couldn't save.",newpw_ph:"New password (min. 6 characters)",change_pw:"Change Password",pw_min:"At least 6 characters.",pw_ok:"Password changed.",err_pw:"Couldn't change the password.",logout:"Log out",photo_ok:"Photo saved.",photo_err:"Photo upload failed.",
+brand_btn:"Edit Branding",brand_title:"Edit Branding",brand_accent:"Accent color",brand_bg:"Background color",brand_reset:"Reset to default",brand_save:"Save Branding",brand_ok:"Branding saved.",brand_hint:"These colors only apply to your account.",cancel:"Cancel",
+tab_notif:"Notifications",notif_title:"Notifications",notif_none:"No notifications yet.",notif_follow:"started following you",follow_back:"Follow Back",waiting:"Waiting for them to follow back before you can chat.",err_follow:"Couldn't complete that. Make sure migration-v2.sql has been run.",
+show_pw:"Show password",hide_pw:"Hide password",just_now:"just now",ago_m:"{n} min ago",ago_h:"{n} h ago",ago_d:"{n} d ago"},
+
+ko:{boot:"불러오는 중…",login_title:"<span>Ma28iyyah</span> 로그인",u_ph:"사용자 이름 (전체 이름)",p_ph:"비밀번호",login_btn:"로그인",login_help:"비밀번호를 잊으셨나요? 마지야 운영진에게 문의하세요.",err_name:"사용자 이름을 찾을 수 없습니다.",err_pass:"비밀번호가 틀렸습니다.",err_load:"데이터를 불러오지 못했습니다. 페이지를 새로고침하세요.",wait:"처리 중…",
+tab_home:"홈",tab_alumni:"동문",tab_org:"조직",tab_about:"소개",tab_msg:"메시지",tab_saved:"저장됨",
+feed_title:"마지야 업데이트",compose_ph:"동기들과 나누고 싶은 이야기를 적어 보세요…",title_ph:"제목 (선택)",add_media:"사진 / 동영상",post_btn:"게시",sending:"보내는 중…",posting_as:"{n} 님으로 게시",err_post:"게시물을 보내지 못했습니다.",err_big:"동영상은 최대 50MB까지 가능합니다.",err_type:"지원되는 사진 또는 동영상 파일을 선택하세요.",no_posts:"아직 게시물이 없습니다. 첫 번째가 되어 보세요!",all:"전체",
+c_edu:"교육",c_career:"커리어",c_work:"직장 생활",c_fact:"팩트",c_update:"업데이트",more:"더 보기",
+act_like:"좋아요",act_cmt:"댓글",act_save:"저장",del:"삭제",confirm_del:"이 게시물을 삭제할까요?",cm_ph:"댓글을 입력하세요…",cm_send:"보내기",no_cm:"아직 댓글이 없습니다.",cm_confirm:"이 댓글을 삭제할까요?",remove:"제거",
+saved_title:"저장한 게시물",no_saved:"저장한 게시물이 없습니다. 게시물의 북마크 아이콘을 눌러 보세요.",
+alumni_title:"동문",search_ph:"동문 이름 검색",n_alumni:"동문 {n}명",db_err:"동문 데이터를 불러오지 못했습니다.",
+org_title:"조직 구조",r_ketua:"회장",r_sekretaris:"총무",r_bendahara:"회계",
+about_title:"마지야 소개",
+about:["마지야 제너레이션은 '탁월함, 특별함, 우수함'을 뜻하는 아랍어 알-마지야(Al-Maziyyah)에서 비롯된 세대의 이름입니다.","이 이름은 고(故) K.H. 무타심 빌라(Drs. K.H. Mu'tashim Billah, M.H.I.) 선생님께서 지어 주셨으며, 이 세대가 학문의 탁월함과 고결한 품성, 인격, 그리고 종교와 사회와 국가를 위한 헌신에서 뛰어난 세대로 성장하기를 바라는 소망과 기도가 담겨 있습니다.","이 이름에는 선생님의 가족과 다루살람 보고르 이슬람 기숙학교(Pondok Pesantren Darussalam Bogor) 원로 스승님들의 기도와 바람도 함께 담겨 있습니다. 이는 단순한 이름이 아니라 이 세대의 여정을 이끌어 줄 기도이자 메시지이며 맡겨진 사명입니다.","마지야 제너레이션은 기숙학교 설립 30주년이라는 뜻깊은 시기와 맞물려 다루살람 보고르 기숙학교 역사의 일부가 되었습니다. 이는 투쟁과 희생, 교육과 헌신으로 다음 세대를 길러 온 긴 여정입니다.","산트리 세대로서 마지야 제너레이션은 기숙학교의 가치를 이어 가고, 학문의 전통을 지키며, 고결한 품성을 높이 받들고, 시대의 도전에 맞서 자신의 잠재력을 키워 나가야 합니다. 모든 산트리는 저마다의 특별함과 잠재력이 있으며, 이를 꾸준히 갈고닦아 다른 사람에게 도움이 되도록 해야 합니다.","이 이름과 기도와 바람을 안고, 마지야 제너레이션은 성과에서 뛰어날 뿐 아니라 신앙이 굳건하고 품성이 고결하며 식견이 넓고, 종교와 모교, 사회와 국가를 위해 늘 헌신하는 세대가 되겠다고 다짐합니다."],
+follow:"팔로우",following_btn:"팔로잉 ✓",n_followers:"팔로워",n_following:"팔로잉",follows_you:"나를 팔로우함",send_dm:"채팅",dm_locked:"서로 팔로우해야 메시지를 보낼 수 있습니다.",no_prof:"프로필이 아직 작성되지 않았습니다.",close:"닫기",edit_profile:"프로필 수정",
+msg_title:"메시지",msg_help:"서로 팔로우한 동문에게만 메시지를 보낼 수 있습니다.",no_friends:"서로 팔로우한 동문이 아직 없습니다. 동문 탭에서 친구를 팔로우해 보세요.",msg_ph:"메시지를 입력하세요…",no_msgs:"아직 메시지가 없습니다. 먼저 인사해 보세요!",back:"뒤로",not_mutual:"서로 팔로우하지 않아 새 메시지를 보낼 수 없습니다.",err_send:"메시지를 보내지 못했습니다.",you:"나",
+acc_title:"내 계정",pw_note:"아직 기본 비밀번호를 사용 중입니다. 지금 변경해 주세요.",photo_btn:"사진 변경",name_ph:"이름",job_ph:"근황 (예: UI 대학 재학 중, 보고르에서 근무)",bio_ph:"자기소개 (모든 동문에게 공개)",save_prof:"프로필 저장",ok_saved:"저장되었습니다.",err_save:"저장하지 못했습니다.",newpw_ph:"새 비밀번호 (6자 이상)",change_pw:"비밀번호 변경",pw_min:"6자 이상 입력하세요.",pw_ok:"비밀번호가 변경되었습니다.",err_pw:"비밀번호를 변경하지 못했습니다.",logout:"로그아웃",photo_ok:"사진이 저장되었습니다.",photo_err:"사진 업로드에 실패했습니다.",
+brand_btn:"브랜딩 편집",brand_title:"브랜딩 편집",brand_accent:"강조 색상",brand_bg:"배경 색상",brand_reset:"기본값으로 되돌리기",brand_save:"브랜딩 저장",brand_ok:"브랜딩이 저장되었습니다.",brand_hint:"이 색상은 내 계정에만 적용됩니다.",cancel:"취소",
+tab_notif:"알림",notif_title:"알림",notif_none:"아직 알림이 없습니다.",notif_follow:"님이 회원님을 팔로우하기 시작했습니다",follow_back:"맞팔로우",waiting:"상대가 팔로우해 주면 채팅할 수 있습니다.",err_follow:"처리하지 못했습니다. migration-v2.sql을 실행했는지 확인하세요.",
+show_pw:"비밀번호 보기",hide_pw:"비밀번호 숨기기",just_now:"방금",ago_m:"{n}분 전",ago_h:"{n}시간 전",ago_d:"{n}일 전"},
+
+ja:{boot:"読み込み中…",login_title:"<span>Ma28iyyah</span> にログイン",u_ph:"ユーザー名（フルネーム）",p_ph:"パスワード",login_btn:"ログイン",login_help:"パスワードを忘れた場合は、マズィーヤの運営までご連絡ください。",err_name:"ユーザー名が見つかりません。",err_pass:"パスワードが違います。",err_load:"データを読み込めませんでした。ページを再読み込みしてください。",wait:"処理中…",
+tab_home:"ホーム",tab_alumni:"卒業生",tab_org:"組織",tab_about:"概要",tab_msg:"メッセージ",tab_saved:"保存済み",
+feed_title:"マズィーヤ・アップデート",compose_ph:"同期のみんなに共有しよう…",title_ph:"タイトル（任意）",add_media:"写真 / 動画",post_btn:"投稿",sending:"送信中…",posting_as:"{n} として投稿",err_post:"投稿を送信できませんでした。",err_big:"動画は最大50MBまでです。",err_type:"対応している写真または動画ファイルを選んでください。",no_posts:"まだ投稿がありません。最初の投稿をしましょう！",all:"すべて",
+c_edu:"教育",c_career:"キャリア",c_work:"仕事",c_fact:"豆知識",c_update:"お知らせ",more:"もっと見る",
+act_like:"いいね",act_cmt:"コメント",act_save:"保存",del:"削除",confirm_del:"この投稿を削除しますか？",cm_ph:"コメントを書く…",cm_send:"送信",no_cm:"コメントはまだありません。",cm_confirm:"このコメントを削除しますか？",remove:"外す",
+saved_title:"保存した投稿",no_saved:"保存した投稿はありません。投稿のしおりアイコンを押してください。",
+alumni_title:"卒業生",search_ph:"卒業生の名前で検索",n_alumni:"卒業生 {n}人",db_err:"卒業生データを読み込めませんでした。",
+org_title:"組織図",r_ketua:"代表",r_sekretaris:"書記",r_bendahara:"会計",
+about_title:"マズィーヤについて",
+about:["マズィーヤ・ジェネレーションは、「卓越・特別・優れた点」を意味するアラビア語「アル＝マズィーヤ（Al-Maziyyah）」に由来する世代の名前です。","この名前は、故 Drs. K.H. ムタシム・ビッラー（M.H.I.）師（アッラーが赦されますように）が授けたもので、この世代が学問の卓越、高潔な人格、そして宗教・社会・国家への奉仕において優れた世代へと成長するようにとの願いと祈りが込められています。","この名前には、師のご家族とダルサラーム・ボゴール・イスラム寄宿学校（Pondok Pesantren Darussalam Bogor）の師たちの祈りと願いも込められています。単なる呼び名ではなく、この世代の歩みを導く祈りであり、メッセージであり、託された使命です。","マズィーヤ・ジェネレーションは、学校創立30周年という節目に重なり、ダルサラーム・ボゴール寄宿学校の歴史の一部となりました。それは、闘い、犠牲、教育、そして奉仕を重ねて次の世代を育ててきた長い道のりです。","サントリ（寄宿学校の学生）の世代として、マズィーヤ・ジェネレーションには、寄宿学校の価値を受け継ぎ、学問の伝統を守り、高潔な人格を重んじ、時代の課題に立ち向かうために自らの可能性を伸ばしていくことが期待されています。すべてのサントリには、それぞれの特別さと可能性があり、それを磨き、伸ばし、他者の役に立つよう導かなければなりません。","この名前、祈り、願いを胸に、マズィーヤ・ジェネレーションは、成果に優れるだけでなく、信仰に堅く、人格が高潔で、視野が広く、宗教・母校・社会・国家のために尽くし続ける世代となることを誓います。"],
+follow:"フォロー",following_btn:"フォロー中 ✓",n_followers:"フォロワー",n_following:"フォロー中",follows_you:"フォローされています",send_dm:"チャット",dm_locked:"メッセージを送るには、お互いにフォローしてください。",no_prof:"プロフィールはまだ未記入です。",close:"閉じる",edit_profile:"プロフィール編集",
+msg_title:"メッセージ",msg_help:"お互いにフォローしている卒業生とだけメッセージできます。",no_friends:"相互フォローはまだありません。卒業生タブで友達をフォローしましょう。",msg_ph:"メッセージを入力…",no_msgs:"メッセージはまだありません。最初に声をかけてみよう！",back:"戻る",not_mutual:"お互いにフォローしていないため、新しいメッセージは送れません。",err_send:"メッセージを送信できませんでした。",you:"あなた",
+acc_title:"マイアカウント",pw_note:"初期パスワードのままです。今すぐ変更してください。",photo_btn:"写真を変更",name_ph:"名前",job_ph:"近況（例：UIで在学中、ボゴールで勤務）",bio_ph:"自己紹介（全卒業生に表示）",save_prof:"プロフィールを保存",ok_saved:"保存しました。",err_save:"保存できませんでした。",newpw_ph:"新しいパスワード（6文字以上）",change_pw:"パスワードを変更",pw_min:"6文字以上で入力してください。",pw_ok:"パスワードを変更しました。",err_pw:"パスワードを変更できませんでした。",logout:"ログアウト",photo_ok:"写真を保存しました。",photo_err:"写真のアップロードに失敗しました。",
+brand_btn:"ブランディング編集",brand_title:"ブランディング編集",brand_accent:"アクセントカラー",brand_bg:"背景色",brand_reset:"初期設定に戻す",brand_save:"ブランディングを保存",brand_ok:"ブランディングを保存しました。",brand_hint:"この色はあなたのアカウントだけに適用されます。",cancel:"キャンセル",
+tab_notif:"通知",notif_title:"通知",notif_none:"通知はまだありません。",notif_follow:"さんがあなたをフォローしました",follow_back:"フォローバック",waiting:"相手がフォローバックするとチャットできます。",err_follow:"処理できませんでした。migration-v2.sql を実行済みか確認してください。",
+show_pw:"パスワードを表示",hide_pw:"パスワードを隠す",just_now:"たった今",ago_m:"{n}分前",ago_h:"{n}時間前",ago_d:"{n}日前"},
+
+su:{boot:"Keur ngamuat…",login_title:"Lebet ka <span>Ma28iyyah</span>",u_ph:"Username (nami lengkep)",p_ph:"Kecap sandi",login_btn:"Lebet",login_help:"Hilap kecap sandi? Hubungi pengurus Maziyyah.",err_name:"Username teu kapendak.",err_pass:"Kecap sandi lepat.",err_load:"Data acan kamuat. Cobi muat deui kaca ieu.",wait:"Keur diprosés…",
+tab_home:"Tepas",tab_alumni:"Alumni",tab_org:"Struktur",tab_about:"Ngeunaan",tab_msg:"Pesen",tab_saved:"Disimpen",
+feed_title:"Maziyyah Update",compose_ph:"Bagikeun naon waé pikeun angkatan…",title_ph:"Judul (opsional)",add_media:"Poto / Pidéo",post_btn:"Pasang",sending:"Keur ngirim…",posting_as:"Masang salaku {n}",err_post:"Postingan teu bisa dikirim.",err_big:"Ukuran pidéo maksimal 50 MB.",err_type:"Pilih file poto atawa pidéo anu dirojong.",no_posts:"Acan aya postingan. Jadi anu mimiti!",all:"Sadayana",
+c_edu:"Atikan",c_career:"Karir",c_work:"Dunya Gawé",c_fact:"Fakta",c_update:"Update",more:"Muat deui",
+act_like:"Resep",act_cmt:"Koméntar",act_save:"Simpen",del:"Hapus",confirm_del:"Hapus postingan ieu?",cm_ph:"Tulis koméntar…",cm_send:"Kirim",no_cm:"Acan aya koméntar.",cm_confirm:"Hapus koméntar ieu?",remove:"Piceun",
+saved_title:"Postingan Disimpen",no_saved:"Acan aya anu disimpen. Pencét ikon penanda dina postingan.",
+alumni_title:"Alumni",search_ph:"Néangan nami alumni",n_alumni:"{n} alumni",db_err:"Data alumni teu bisa dimuat.",
+org_title:"Struktur Organisasi",r_ketua:"Ketua",r_sekretaris:"Sekretaris",r_bendahara:"Bendahara",
+about_title:"Ngeunaan Maziyyah",
+about:["Maziyyah Generation téh ngaran hiji generasi anu asalna tina basa Arab, nyaéta Al-Maziyyah, anu hartina kaunggulan, kaistiméwaan, jeung kaleuwihan.","Ngaran ieu dipaparinkeun ku Almarhum Al-Maghfurlah Drs. K.H. Mu'tashim Billah, M.H.I., kalayan harepan jeung doa sangkan generasi ieu tumuwuh jadi generasi anu unggul dina élmu pangaweruh, luhur akhlak, kapribadian, sarta ngabdi ka agama, masarakat, jeung bangsa.","Pamaparin ngaran ieu ogé dibarengan ku doa jeung harepan ti kulawarga Almarhum sarta para masyayikh Pondok Pesantren Darussalam Bogor. Ngaran éta lain ukur identitas, tapi mangrupa doa, pesen, jeung amanah anu diharepkeun salawasna jadi pituduh dina lalampahan generasi ieu.","Ayana Maziyyah Generation jadi bagian tina sajarah Pondok Pesantren Darussalam Bogor, pas jeung moméntum tilu dasawarsa (30 taun) ngadegna pondok pesantren. Lalampahan panjang anu pinuh ku perjuangan, pangorbanan, atikan, jeung pangabdian dina nyiptakeun generasi panerus umat.","Salaku generasi santri, Maziyyah Generation diharepkeun bisa neruskeun nilai-nilai kapesantrenan, ngajaga tradisi kaélmuan, ngaluhurkeun akhlak, sarta mekarkeun potensi diri pikeun nyanghareupan tangtangan jaman. Unggal santri boga kaistiméwaan jeung potensi séwang-séwangan anu kudu terus diasah, dimekarkeun, jeung diarahkeun sangkan bisa méré mangpaat pikeun batur.","Mawa ngaran, doa, jeung harepan éta, Maziyyah Generation boga tekad jadi generasi anu lain ukur unggul dina prestasi, tapi ogé kuat iman, luhur akhlak, lega wawasan, sarta salawasna ngabdikeun diri pikeun agama, almamater, masarakat, jeung bangsa."],
+follow:"Turutan",following_btn:"Nuturkeun ✓",n_followers:"nu nuturkeun",n_following:"nuturkeun",follows_you:"Nuturkeun anjeun",send_dm:"Chat",dm_locked:"Silih turutan heula pikeun bisa silih kirim pesen.",no_prof:"Profil acan dilengkepan.",close:"Tutup",edit_profile:"Édit Profil",
+msg_title:"Pesen",msg_help:"Anjeun ngan bisa ngirim pesen ka alumni anu silih turutan.",no_friends:"Acan aya anu silih turutan. Buka tab Alumni, terus turutan baraya anjeun.",msg_ph:"Tulis pesen…",no_msgs:"Acan aya pesen. Sapa heula!",back:"Balik",not_mutual:"Anjeun duanana teu silih turutan, jadi pesen anyar teu bisa dikirim.",err_send:"Pesen gagal dikirim.",you:"Anjeun",
+acc_title:"Akun Kuring",pw_note:"Kecap sandi anjeun masih bawaan. Gantian ayeuna enya.",photo_btn:"Ganti Poto",name_ph:"Nami",job_ph:"Kasibukan, upamana: Kuliah di UI atawa Digawé di Bogor",bio_ph:"Ngeunaan anjeun (katémbong ku sadaya alumni)",save_prof:"Simpen Profil",ok_saved:"Parantos disimpen.",err_save:"Gagal nyimpen.",newpw_ph:"Kecap sandi anyar (min. 6 karakter)",change_pw:"Ganti Kecap Sandi",pw_min:"Minimal 6 karakter.",pw_ok:"Kecap sandi diganti.",err_pw:"Gagal ngaganti kecap sandi.",logout:"Kaluar",photo_ok:"Poto disimpen.",photo_err:"Poto gagal diunggah.",
+brand_btn:"Édit Branding",brand_title:"Édit Branding",brand_accent:"Warna aksén",brand_bg:"Warna latar",brand_reset:"Balikeun ka bawaan",brand_save:"Simpen Branding",brand_ok:"Branding disimpen.",brand_hint:"Warna ieu ngan lumaku pikeun akun anjeun.",cancel:"Bolay",
+tab_notif:"Béwara",notif_title:"Béwara",notif_none:"Acan aya béwara.",notif_follow:"mimiti nuturkeun anjeun",follow_back:"Turutan Balik",waiting:"Antosan dituturkeun balik pikeun bisa chat.",err_follow:"Gagal diprosés. Pastikeun migration-v2.sql geus dijalankeun.",
+show_pw:"Témbongkeun kecap sandi",hide_pw:"Sumputkeun kecap sandi",just_now:"nembé",ago_m:"{n} menit kapengker",ago_h:"{n} jam kapengker",ago_d:"{n} poé kapengker"},
+
+jv:{boot:"Lagi ngunggahake…",login_title:"Mlebu menyang <span>Ma28iyyah</span>",u_ph:"Username (jeneng lengkap)",p_ph:"Tembung sandhi",login_btn:"Mlebu",login_help:"Lali tembung sandhi? Hubungi pengurus Maziyyah.",err_name:"Username ora ketemu.",err_pass:"Tembung sandhi salah.",err_load:"Data durung kaunggah. Coba muat maneh kaca iki.",wait:"Lagi diproses…",
+tab_home:"Ngarep",tab_alumni:"Alumni",tab_org:"Struktur",tab_about:"Bab Kita",tab_msg:"Pesen",tab_saved:"Disimpen",
+feed_title:"Maziyyah Update",compose_ph:"Bagekna apa wae kanggo angkatan…",title_ph:"Judul (opsional)",add_media:"Foto / Video",post_btn:"Kirim",sending:"Lagi ngirim…",posting_as:"Ngirim minangka {n}",err_post:"Postingan durung bisa dikirim.",err_big:"Ukuran video maksimal 50 MB.",err_type:"Pilih file foto utawa video sing didukung.",no_posts:"Durung ana postingan. Dadi sing sepisanan!",all:"Kabeh",
+c_edu:"Pendhidhikan",c_career:"Karir",c_work:"Donya Kerja",c_fact:"Fakta",c_update:"Update",more:"Muat maneh",
+act_like:"Seneng",act_cmt:"Komentar",act_save:"Simpen",del:"Busak",confirm_del:"Busak postingan iki?",cm_ph:"Tulis komentar…",cm_send:"Kirim",no_cm:"Durung ana komentar.",cm_confirm:"Busak komentar iki?",remove:"Singkirake",
+saved_title:"Postingan Disimpen",no_saved:"Durung ana sing disimpen. Pencet ikon penanda ing postingan.",
+alumni_title:"Alumni",search_ph:"Goleki jeneng alumni",n_alumni:"{n} alumni",db_err:"Data alumni durung bisa dimuat.",
+org_title:"Struktur Organisasi",r_ketua:"Ketua",r_sekretaris:"Sekretaris",r_bendahara:"Bendahara",
+about_title:"Bab Maziyyah",
+about:["Maziyyah Generation iku jeneng sawijining generasi sing asale saka basa Arab, yaiku Al-Maziyyah, tegese kaunggulan, kaistimewaan, lan kaluwihan.","Jeneng iki diparingake dening Almarhum Al-Maghfurlah Drs. K.H. Mu'tashim Billah, M.H.I., kanthi pangarep-arep lan donga supaya generasi iki thukul dadi generasi sing unggul ing ngelmu, luhur akhlake, kapribadene, lan ngabdi marang agama, masyarakat, lan bangsa.","Pamarikan jeneng iki uga dibarengi donga lan pangarep-arep saka kulawarga Almarhum lan para masyayikh Pondok Pesantren Darussalam Bogor. Jeneng iku dudu mung identitas, nanging uga donga, pitutur, lan amanah sing dikarepake tansah dadi pepadhang ing lakune generasi iki.","Anane Maziyyah Generation dadi bagéyan saka sajarah Pondok Pesantren Darussalam Bogor, pas karo momentum telung dasawarsa (30 taun) madege pondok pesantren. Lelakon dawa sing kebak perjuangan, pangorbanan, pendidikan, lan pengabdian kanggo nyiapake generasi panerus umat.","Minangka generasi santri, Maziyyah Generation dikarepake bisa nerusake nilai-nilai kepesantrenan, njaga tradisi keilmuan, njunjung dhuwur akhlak, lan ngembangake potensi dhiri kanggo ngadhepi tantangan jaman. Saben santri nduweni kaistimewaan lan potensi dhewe-dhewe sing kudu terus diasah, dikembangake, lan diarahake supaya bisa menehi manfaat tumrap liyane.","Kanthi nggawa jeneng, donga, lan pangarep-arep kuwi, Maziyyah Generation duwe tekad dadi generasi sing ora mung unggul ing prestasi, nanging uga kukuh imane, luhur akhlake, jembar wawasane, lan tansah ngabdi marang agama, almamater, masyarakat, lan bangsa."],
+follow:"Tutugna",following_btn:"Nutugake ✓",n_followers:"sing nutugake",n_following:"nutugake",follows_you:"Nutugake sampeyan",send_dm:"Chat",dm_locked:"Saling tutugna dhisik supaya bisa saling kirim pesen.",no_prof:"Profil durung dilengkapi.",close:"Tutup",edit_profile:"Edit Profil",
+msg_title:"Pesen",msg_help:"Sampeyan mung bisa ngirim pesen marang alumni sing saling nutugake.",no_friends:"Durung ana sing saling nutugake. Bukak tab Alumni, banjur tutugna kanca-kancamu.",msg_ph:"Tulis pesen…",no_msgs:"Durung ana pesen. Sapa dhisik!",back:"Bali",not_mutual:"Sampeyan loro durung saling nutugake, dadi pesen anyar durung bisa dikirim.",err_send:"Pesen gagal dikirim.",you:"Sampeyan",
+acc_title:"Akunku",pw_note:"Tembung sandhimu isih bawaan. Gantinen saiki ya.",photo_btn:"Ganti Foto",name_ph:"Jeneng",job_ph:"Kegiyatan, upamane: Kuliah ing UI utawa Kerja ing Bogor",bio_ph:"Bab sampeyan (katon dening kabeh alumni)",save_prof:"Simpen Profil",ok_saved:"Wis disimpen.",err_save:"Gagal nyimpen.",newpw_ph:"Tembung sandhi anyar (min. 6 karakter)",change_pw:"Ganti Tembung Sandhi",pw_min:"Minimal 6 karakter.",pw_ok:"Tembung sandhi diganti.",err_pw:"Gagal ngganti tembung sandhi.",logout:"Metu",photo_ok:"Foto disimpen.",photo_err:"Foto gagal diunggah.",
+brand_btn:"Edit Branding",brand_title:"Edit Branding",brand_accent:"Warna aksen",brand_bg:"Warna latar",brand_reset:"Balekna menyang bawaan",brand_save:"Simpen Branding",brand_ok:"Branding disimpen.",brand_hint:"Warna iki mung ditrapake kanggo akunmu.",cancel:"Batal",
+tab_notif:"Kabar",notif_title:"Kabar",notif_none:"Durung ana kabar.",notif_follow:"wiwit nutugake sampeyan",follow_back:"Tutugna Bali",waiting:"Ngenteni ditutugake bali supaya bisa chat.",err_follow:"Gagal diproses. Priksa menawa migration-v2.sql wis dijalanake.",
+show_pw:"Tuduhna tembung sandhi",hide_pw:"Singitna tembung sandhi",just_now:"saweg wae",ago_m:"{n} menit kepungkur",ago_h:"{n} jam kepungkur",ago_d:"{n} dina kepungkur"}
+};
+
+/* ---------- DATA TETAP ---------- */
+const WA="https://whatsapp.com/channel/0029VaW9xTeJENxyHBtCZz1y",IG="https://www.instagram.com/maziyyah.generation",TT="https://www.tiktok.com/@maziyyah.generation";
+const ORG={ketua:[["a095","Teddy Galang"],["a027","Fahri Enggar"],["a006","Agna Fauziah"],["a039","Icha Mukhlisah"],["a023","Debora Meilina"]],sekretaris:[["a017","Azka Maulidi"],["a052","Muhammad Al-Fatih"]],bendahara:[["a019","Busyron Nadzir"],["a022","Davina Nur Maulidia"]]};
+const CATS=[["Pendidikan","c_edu"],["Karir","c_career"],["Dunia Kerja","c_work"],["Fakta","c_fact"],["Update","c_update"]];
+const ICO=`<a href="${WA}" target="_blank" rel="noopener" aria-label="WhatsApp Channel"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.2 14c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.4 0 .2 0 .8-.2 1.4z"/></svg></a><a href="${IG}" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor"/></svg></a><a href="${TT}" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c.3 2.3 1.7 3.9 4 4.1v3.1c-1.5 0-2.9-.5-4-1.3v6.3c0 3.1-2.5 5.6-5.6 5.6S5.3 18.3 5.3 15.2s2.5-5.6 5.6-5.6c.3 0 .6 0 .9.1v3.2c-.3-.1-.6-.2-.9-.2-1.3 0-2.4 1.1-2.4 2.5s1.1 2.5 2.4 2.5 2.5-1.1 2.5-2.5V3h3.1z"/></svg></a>`;
+const BG_PRESETS=["#fff6e0","#ffffff","#dff5ec","#dcecff","#eee6ff","#ffe3ea","#16211f"];
+const ACC_PRESETS=["#1fa085","#ff8a3d","#5ab0ff","#e8467c","#8b5cf6","#e6b800","#d63a2f","#5e9c1f"];
+const DEF={accent:"#1fa085",bg:"#fff6e0"},HEX=/^#[0-9a-f]{6}$/i;
+const MAXVID=50*1024*1024;
+
+/* ---------- UTIL ---------- */
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $=id=>document.getElementById(id);
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let lang="id",users=[],byId={},me=null,session=null;
+const t=(k,v)=>{let s=I18N[lang]?.[k]??I18N.id[k]??k;if(v)for(const x in v)s=s.replace("{"+x+"}",v[x]);return s};
+const ic=n=>`<svg class="ic"><use href="#i-${n}"/></svg>`;
+const catName=c=>{const f=CATS.find(x=>x[0]===c);return f?t(f[1]):c};
+const avatar=(u,n)=>`<span class="av">${u&&u.photo_url?`<img src="${esc(u.photo_url)}" alt="" loading="lazy">`:esc((u?.name||n||"?")[0])}</span>`;
+function ago(d){const s=(Date.now()-new Date(d))/1000;
+ if(s<60)return t("just_now");if(s<3600)return t("ago_m",{n:Math.floor(s/60)});if(s<86400)return t("ago_h",{n:Math.floor(s/3600)});if(s<604800)return t("ago_d",{n:Math.floor(s/86400)});
+ return new Date(d).toLocaleDateString(LOC[lang],{day:"numeric",month:"short",year:"numeric"})}
+const clock=d=>new Date(d).toLocaleTimeString(LOC[lang],{hour:"2-digit",minute:"2-digit"});
+
+/* ---------- BRANDING ---------- */
+const rgb=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+const lum=h=>{const [r,g,b]=rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4});return .2126*r+.7152*g+.0722*b};
+const mix=(a,b,k)=>{const x=rgb(a),y=rgb(b);return "#"+x.map((v,i)=>Math.round(v*(1-k)+y[i]*k).toString(16).padStart(2,"0")).join("")};
+let brand={...DEF};
+function applyBrand(b){
+ brand={accent:HEX.test(b?.accent||"")?b.accent:DEF.accent,bg:HEX.test(b?.bg||"")?b.bg:DEF.bg};
+ const dark=lum(brand.bg)<.22,s=document.documentElement.style,line=dark?"#f6f1e3":"#111";
+ s.setProperty("--acc",brand.accent);s.setProperty("--on",lum(brand.accent)>.35?"#111":"#fff");
+ s.setProperty("--bg",brand.bg);s.setProperty("--ink",line);s.setProperty("--bd",line);s.setProperty("--sh",line);
+ s.setProperty("--card",dark?mix(brand.bg,"#ffffff",.12):"#ffffff");s.setProperty("--mute",dark?"#c9d3cf":"#444");
+ s.colorScheme=dark?"dark":"light";
+ document.querySelector("meta[name=theme-color]").content=brand.accent;
+ setFavicon();
+}
+function setFavicon(){
+ const P=document.getElementById("lgp").getAttribute("d");
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 111 152"><path d="${P}" transform="translate(5 5)" fill="#111"/><path d="${P}" fill="${brand.accent}" stroke="#111" stroke-width="4" stroke-linejoin="miter"/></svg>`;
+ let l=document.querySelector("link[rel=icon]");if(!l){l=document.createElement("link");l.rel="icon";document.head.appendChild(l)}
+ l.href="data:image/svg+xml,"+encodeURIComponent(svg);
+}
+const saveLocal=()=>{LS.set("ma28.brand",JSON.stringify(brand))};
+try{applyBrand(JSON.parse(LS.get("ma28.brand")||"null"))}catch(e){applyBrand(null)}
+
+/* ---------- BAHASA ---------- */
+function syncEyes(){document.querySelectorAll("[data-eye]").forEach(b=>{const sh=$(b.dataset.eye).type==="text";b.innerHTML=ic(sh?"eyeoff":"eye");b.setAttribute("aria-label",t(sh?"hide_pw":"show_pw"));b.setAttribute("aria-pressed",sh)})}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-eye]");if(!b)return;const i=$(b.dataset.eye);i.type=i.type==="password"?"text":"password";syncEyes();i.focus()});
+function hidePw(){$("lp").type=$("np").type="password";syncEyes()}
+function setLang(l,persist){
+ if(!I18N[l])l="id";lang=l;LS.set("ma28.lang",l);
+ $("langA").value=$("langH").value=l;
+ document.documentElement.lang=l;
+ document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=t(e.dataset.i18n));
+ document.querySelectorAll("[data-i18n-html]").forEach(e=>e.innerHTML=t(e.dataset.i18nHtml));
+ document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));
+ $("pCat").innerHTML=CATS.map(([v,k])=>`<option value="${v}">${esc(t(k))}</option>`).join("");
+
+ syncEyes();renderAll();
+ if(persist&&me&&me.lang!==l){me.lang=l;sb.from("profiles").update({lang:l}).eq("id",me.id).then(()=>{})}
+}
+for(const sel of [$("langA"),$("langH")]){sel.innerHTML=LANGS.map(([v,n])=>`<option value="${v}">${n}</option>`).join("");sel.onchange=()=>setLang(sel.value,true)}
+$("soc").innerHTML=ICO;
+$("mq").innerHTML=("MAZIYYAH GENERATION ★ THE GENERATION OF GREATNESS ★ ").repeat(8);
+document.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>b.closest("dialog").close());
+
+/* ---------- STATE ---------- */
+const P=new Map();let feedIds=[],savedIds=[],cat="all",limit=20,hasMore=false;
+let myLikes=new Set(),mySaves=new Set(),following=new Set(),followers=new Set(),followTimes={};
+const cmts={},openCm=new Set();
+let tab="home",pendingChat=null,chatWith=null,conv=new Map(),unread=0,pending=null,chan=null,viewId=null,pollT=null,busy=false;
+
+/* ---------- MASUK / KELUAR ---------- */
+async function loadUsers(){
+ const {data,error}=await sb.from("profiles").select("*").order("name");
+ if(error){$("dbnote").hidden=false;return false}
+ users=data;byId=Object.fromEntries(users.map(u=>[u.id,u]));
+ $("nl").innerHTML=users.map(u=>`<option value="${esc(u.name)}">`).join("");return true;
+}
+$("loginForm").onsubmit=async e=>{
+ e.preventDefault();const n=$("lu").value.trim().toLowerCase(),p=$("lp").value,err=$("lerr");
+ if(!users.length)return err.textContent=t("err_load");
+ const u=users.find(x=>x.name.trim().toLowerCase()===n||x.kode===n);
+ if(!u)return err.textContent=t("err_name");
+ err.textContent="";$("lgo").disabled=true;
+ const {error}=await sb.auth.signInWithPassword({email:u.kode+"@maziyyah.app",password:p});
+ $("lgo").disabled=false;
+ if(error)return err.textContent=t("err_pass");
+ $("lp").value="";hidePw();
+ const {data}=await sb.auth.getSession();session=data.session;await enterApp(true);
+};
+async function enterApp(fresh){
+ me=byId[session.user.id];
+ if(!me){await sb.auth.signOut();return showAuth()}
+ if(HEX.test(me.accent)||HEX.test(me.bg))applyBrand({accent:me.accent,bg:me.bg});saveLocal();
+ $("boot").hidden=true;$("auth").hidden=true;$("app").hidden=false;
+ setLang(I18N[me.lang]&&me.lang?me.lang:lang,false);
+ renderHeader();
+ await Promise.all([loadFollows(),loadPosts(),loadConvos()]);
+ route();
+ startRealtime();
+ if(fresh&&me.dp)openMe();
+}
+function showAuth(){$("boot").hidden=true;$("app").hidden=true;$("auth").hidden=false}
+$("logout").onclick=async()=>{await sb.auth.signOut();location.hash="";location.reload()};
+sb.auth.onAuthStateChange(ev=>{if(ev==="SIGNED_OUT"&&me)location.reload()});
+
+/* ---------- ROUTE ---------- */
+const TABS=["home","alumni","msg","notif","saved","org","about"];
+function route(){
+ if(!me)return;
+ const h=location.hash.slice(1);tab=TABS.includes(h)?h:"home";
+ document.querySelectorAll("[data-view]").forEach(s=>s.hidden=s.dataset.view!==tab);
+ document.querySelectorAll(".tab").forEach(a=>{if(a.dataset.tab===tab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+ if(tab==="saved")loadSaved();
+ if(tab==="msg"){if(pendingChat){const id=pendingChat;pendingChat=null;openChat(id);loadConvos().then(()=>{if(!chatWith)renderMsgs()})}else{chatWith=null;loadConvos().then(renderMsgs)}}
+ scrollTo(0,0);renderMsgs();
+}
+addEventListener("hashchange",route);
+
+/* ---------- RENDER UMUM ---------- */
+function renderAll(){
+ if(me){renderHeader();renderAlumni();renderOrg();renderAbout();renderFeed();renderSaved();renderMsgs();renderChips();renderNotif()}
+ else renderAbout();
+}
+function renderHeader(){
+ $("meBtn").innerHTML=me?avatar(me).replace('<span class="av">','').replace(/<\/span>$/,""):"";
+ $("meBtn").setAttribute("aria-label",t("acc_title"));
+ $("asLbl").textContent=me?t("posting_as",{n:me.name}):"";
+}
+function renderAbout(){$("aboutBox").innerHTML=t("about").map(p=>`<p>${esc(p)}</p>`).join("")+`<span class="k">MAZIYYAH GENERATION · THE GENERATION OF GREATNESS</span>`}
+function personBtn([k,n]){const u=users.find(x=>x.kode===k);return `<button class="pp" ${u?`data-p="${u.id}"`:""}>${avatar(u,n)}<span>${esc(n)}</span></button>`}
+function renderOrg(){
+ $("chart").innerHTML=`<div class="node k box"><h3>${t("r_ketua")}</h3>${ORG.ketua.map(personBtn).join("")}</div><div class="stem"></div><div class="kids"><div class="node b box"><h3>${t("r_bendahara")}</h3>${ORG.bendahara.map(personBtn).join("")}</div><div class="node s box"><h3>${t("r_sekretaris")}</h3>${ORG.sekretaris.map(personBtn).join("")}</div></div>`;
+}
+function renderAlumni(){
+ const f=$("q").value.trim().toLowerCase(),l=users.filter(u=>u.name.toLowerCase().includes(f));
+ $("cnt").textContent=t("n_alumni",{n:l.length});
+ $("names").innerHTML=l.map(u=>`<button data-p="${u.id}">${avatar(u)}<span>${esc(u.name)}${u.id===me?.id?" ★":following.has(u.id)?" ✓":""}</span></button>`).join("");
+}
+$("q").oninput=renderAlumni;
+
+/* ---------- FEED ---------- */
+function renderChips(){
+ $("chips").innerHTML=[["all",t("all")],...CATS.map(([v,k])=>[v,t(k)])].map(([v,n])=>`<button data-cat="${v}" aria-pressed="${cat===v}">${esc(n)}</button>`).join("");
+}
+$("chips").onclick=e=>{const b=e.target.closest("[data-cat]");if(!b)return;cat=b.dataset.cat;limit=20;loadPosts()};
+$("moreBtn").onclick=()=>{limit+=20;loadPosts()};
+function norm(p){p.lc=p.likes?.[0]?.count??0;p.cc=p.comments?.[0]?.count??0;P.set(p.id,p);return p}
+async function hydrate(ids){
+ if(!ids.length)return;
+ const [l,s]=await Promise.all([sb.from("likes").select("post_id").eq("user_id",me.id).in("post_id",ids),sb.from("saves").select("post_id").eq("user_id",me.id)]);
+ (l.data||[]).forEach(r=>myLikes.add(r.post_id));mySaves=new Set((s.data||[]).map(r=>r.post_id));
+}
+async function loadPosts(){
+ let q=sb.from("posts").select("*,likes(count),comments(count)").order("created_at",{ascending:false}).limit(limit);
+ if(cat!=="all")q=q.eq("cat",cat);
+ const {data,error}=await q;
+ const list=(data||[]).map(norm);feedIds=list.map(p=>p.id);hasMore=list.length===limit;
+ if(!error)await hydrate(feedIds);
+ renderChips();renderFeed();
+}
+function mediaHTML(p){
+ if(!p.media_url)return "";
+ return p.media_type==="video"?`<video class="media" src="${esc(p.media_url)}" controls playsinline preload="metadata"></video>`:`<img class="media" src="${esc(p.media_url)}" alt="" loading="lazy">`;
+}
+function postHTML(p){
+ const u=byId[p.user_id],liked=myLikes.has(p.id),sv=mySaves.has(p.id),mine=p.user_id===me.id;
+ return `<article class="box post" data-post="${p.id}"><header class="ph"><button class="who" data-p="${p.user_id}">${avatar(u,p.author)}<span><b>${esc(p.author||u?.name)}</b><small class="meta">${ago(p.created_at)}</small></span></button><span class="chip">${esc(catName(p.cat))}</span></header>${p.title?`<h3>${esc(p.title)}</h3>`:""}${p.body?`<p>${esc(p.body)}</p>`:""}${mediaHTML(p)}<div class="acts"><button class="act lk${liked?" on":""}" data-act="like" aria-pressed="${liked}" aria-label="${t("act_like")}">${ic("heart")}<b>${p.lc}</b></button><button class="act" data-act="cmt" aria-label="${t("act_cmt")}">${ic("cmt")}<b>${p.cc}</b></button><button class="act sv${sv?" on":""}" data-act="save" aria-pressed="${sv}" aria-label="${t("act_save")}">${ic("mark")}</button>${mine?`<button class="act del" data-act="del" aria-label="${t("del")}">${ic("trash")}</button>`:""}</div><div class="cm" hidden></div></article>`;
+}
+function fillList(el,ids,emptyKey){
+ el.innerHTML=ids.map(id=>postHTML(P.get(id))).join("")||`<p>${t(emptyKey)}</p>`;
+ ids.forEach(id=>{if(openCm.has(id))openComments(id,el)});
+}
+function renderFeed(){if(!me)return;fillList($("feed"),feedIds,"no_posts");$("moreBtn").hidden=!hasMore}
+function renderSaved(){if(me)fillList($("savedList"),savedIds,"no_saved")}
+async function loadSaved(){
+ const {data}=await sb.from("saves").select("created_at,posts(*,likes(count),comments(count))").eq("user_id",me.id).order("created_at",{ascending:false});
+ const list=(data||[]).filter(r=>r.posts).map(r=>norm(r.posts));savedIds=list.map(p=>p.id);
+ await hydrate(savedIds);renderSaved();
+}
+function refreshCard(id){
+ document.querySelectorAll(`[data-post="${id}"]`).forEach(card=>{
+  const wrap=document.createElement("div");wrap.innerHTML=postHTML(P.get(id));const n=wrap.firstElementChild;
+  card.replaceWith(n);if(openCm.has(id))openComments(id,n.parentElement);
+ });
+}
+
+/* ---------- AKSI POSTINGAN ---------- */
+async function loadComments(id){
+ const {data}=await sb.from("comments").select("*").eq("post_id",id).order("created_at");cmts[id]=data||[];
+}
+function cmHTML(id){
+ const p=P.get(id),list=cmts[id]||[];
+ return (list.map(c=>{const u=byId[c.user_id],can=c.user_id===me.id||p.user_id===me.id;
+  return `<div class="c"><button class="who" data-p="${c.user_id}">${avatar(u)}</button><div><b>${esc(u?.name||"?")}</b> <small class="meta">${ago(c.created_at)}</small><div>${esc(c.body)}</div></div>${can?`<button class="x" data-act="cdel" data-c="${c.id}" data-pid="${id}" aria-label="${t("del")}">×</button>`:""}</div>`}).join("")||`<p class="meta">${t("no_cm")}</p>`)+
+  `<form class="cf" data-pid="${id}"><input maxlength="500" placeholder="${esc(t("cm_ph"))}" required><button class="btn p s">${t("cm_send")}</button></form>`;
+}
+async function openComments(id,scope){
+ openCm.add(id);
+ if(!cmts[id])await loadComments(id);
+ (scope||document).querySelectorAll(`[data-post="${id}"] .cm`).forEach(el=>{el.hidden=false;el.innerHTML=cmHTML(id)});
+}
+function stripStorage(url){const m=/\/object\/public\/media\/(.+)$/.exec(url||"");return m?decodeURIComponent(m[1]):null}
+document.addEventListener("click",async e=>{
+ const pb=e.target.closest("[data-p]");if(pb){showProfile(pb.dataset.p);return}
+ const b=e.target.closest("[data-act]");if(!b)return;
+ const act=b.dataset.act,card=b.closest("[data-post]"),id=card?+card.dataset.post:null,p=id?P.get(id):null;
+ if(act==="like"&&p){
+  if(myLikes.has(id)){myLikes.delete(id);p.lc--;refreshCard(id);await sb.from("likes").delete().eq("post_id",id).eq("user_id",me.id)}
+  else{myLikes.add(id);p.lc++;refreshCard(id);const r=await sb.from("likes").insert({post_id:id});if(r.error&&r.error.code!=="23505"){myLikes.delete(id);p.lc--;refreshCard(id)}}
+ }else if(act==="save"&&p){
+  if(mySaves.has(id)){mySaves.delete(id);refreshCard(id);await sb.from("saves").delete().eq("post_id",id).eq("user_id",me.id);if(tab==="saved")loadSaved()}
+  else{mySaves.add(id);refreshCard(id);const r=await sb.from("saves").insert({post_id:id});if(r.error&&r.error.code!=="23505"){mySaves.delete(id);refreshCard(id)}}
+ }else if(act==="cmt"&&p){
+  const cm=card.querySelector(".cm");
+  if(!cm.hidden){cm.hidden=true;openCm.delete(id)}else await openComments(id,card.parentElement);
+ }else if(act==="cdel"){
+  if(!confirm(t("cm_confirm")))return;const pid=+b.dataset.pid;
+  const r=await sb.from("comments").delete().eq("id",b.dataset.c);
+  if(!r.error){cmts[pid]=cmts[pid].filter(c=>String(c.id)!==b.dataset.c);P.get(pid).cc=Math.max(0,P.get(pid).cc-1);refreshCard(pid)}
+ }else if(act==="del"&&p){
+  if(!confirm(t("confirm_del")))return;
+  const r=await sb.from("posts").delete().eq("id",id);
+  if(!r.error){const path=stripStorage(p.media_url);if(path)sb.storage.from("media").remove([path]).then(()=>{});
+   feedIds=feedIds.filter(x=>x!==id);savedIds=savedIds.filter(x=>x!==id);P.delete(id);renderFeed();renderSaved()}
+ }else if(act==="follow"){toggleFollow(b.dataset.id)}
+ else if(act==="dm"){$("dView").close();if(location.hash==="#msg")openChat(b.dataset.id);else{pendingChat=b.dataset.id;location.hash="#msg"}}
+ else if(act==="editme"){$("dView").close();openMe()}
+ else if(act==="chat"){openChat(b.dataset.id)}
+});
+document.addEventListener("submit",async e=>{
+ const f=e.target.closest(".cf");if(!f)return;e.preventDefault();
+ const id=+f.dataset.pid,inp=f.querySelector("input"),body=inp.value.trim();if(!body)return;
+ const r=await sb.from("comments").insert({post_id:id,body});
+ if(!r.error){inp.value="";await loadComments(id);P.get(id).cc=cmts[id].length;refreshCard(id)}
+});
+
+/* ---------- POSTING + FOTO/VIDEO ---------- */
+function clearPending(){if(pending?.url)URL.revokeObjectURL(pending.url);pending=null;$("prev").hidden=true;$("prev").innerHTML="";$("pFile").value=""}
+$("pFile").onchange=e=>{
+ const f=e.target.files[0];$("perr").textContent="";if(!f)return;
+ const vid=f.type.startsWith("video/"),img=f.type.startsWith("image/");
+ if(!vid&&!img){$("pFile").value="";return $("perr").textContent=t("err_type")}
+ if(vid&&f.size>MAXVID){$("pFile").value="";return $("perr").textContent=t("err_big")}
+ clearPending();pending={file:f,vid,url:URL.createObjectURL(f)};
+ $("prev").innerHTML=(vid?`<video src="${pending.url}" controls playsinline preload="metadata"></video>`:`<img src="${pending.url}" alt="">`)+`<button class="btn s o" type="button" id="prevX">${t("remove")}</button>`;
+ $("prev").hidden=false;$("prevX").onclick=clearPending;
+};
+$("pickBtn").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("pFile").click()}};
+async function imgBlob(file,max=1600){
+ let bm;try{bm=await createImageBitmap(file,{imageOrientation:"from-image"})}catch(e){bm=await createImageBitmap(file)}
+ const k=Math.min(1,max/Math.max(bm.width,bm.height)),c=document.createElement("canvas");c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);
+ c.getContext("2d").drawImage(bm,0,0,c.width,c.height);
+ return new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error("blob")),"image/jpeg",.82));
+}
+$("postBtn").onclick=async()=>{
+ if(busy||!me)return;
+ const title=$("pTitle").value.trim(),body=$("pBody").value.trim(),err=$("perr");err.textContent="";
+ if(!body&&!pending)return;
+ busy=true;$("postBtn").disabled=true;$("postBtn").textContent=t("sending");
+ try{
+  let media_url=null,media_type=null;
+  if(pending){
+   let blob=pending.file,ct=pending.file.type,ext;
+   if(pending.vid){ext=ct==="video/webm"?"webm":ct==="video/quicktime"?"mov":"mp4";media_type="video"}
+   else if(ct==="image/gif"){ext="gif";media_type="image"}
+   else{blob=await imgBlob(pending.file);ct="image/jpeg";ext="jpg";media_type="image"}
+   const path=`${me.id}/${Date.now()}.${ext}`;
+   const up=await sb.storage.from("media").upload(path,blob,{contentType:ct,cacheControl:"31536000"});if(up.error)throw up.error;
+   media_url=sb.storage.from("media").getPublicUrl(path).data.publicUrl;
+  }
+  const r=await sb.from("posts").insert({title,body,cat:$("pCat").value,media_url,media_type});if(r.error)throw r.error;
+  $("pTitle").value=$("pBody").value="";clearPending();cat="all";await loadPosts();
+ }catch(x){err.textContent=t("err_post")}
+ busy=false;$("postBtn").disabled=false;$("postBtn").textContent=t("post_btn");
+};
+
+/* ---------- FOLLOW ---------- */
+async function loadFollows(){
+ const [a,b]=await Promise.all([sb.from("follows").select("following_id").eq("follower_id",me.id),sb.from("follows").select("follower_id,created_at").eq("following_id",me.id)]);
+ following=new Set((a.data||[]).map(r=>r.following_id));followers=new Set((b.data||[]).map(r=>r.follower_id));
+ followTimes=Object.fromEntries((b.data||[]).map(r=>[r.follower_id,r.created_at]));renderNotif();
+}
+const mutual=id=>following.has(id)&&followers.has(id);
+async function toggleFollow(id){
+ let err=null;
+ if(following.has(id)){const r=await sb.from("follows").delete().eq("follower_id",me.id).eq("following_id",id);if(r.error)err=r.error;else following.delete(id)}
+ else{const r=await sb.from("follows").insert({following_id:id});if(r.error&&r.error.code!=="23505")err=r.error;else following.add(id)}
+ renderAlumni();renderMsgs();renderNotif();
+ if($("dView").open){await showProfile(id);if(err)$("vErr").textContent=t("err_follow")+" ("+(err.message||err.code)+")"}
+ else if(err)toast(t("err_follow"));
+}
+let toastT=null;
+function toast(m){const e=$("toast");e.textContent=m;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,4500)}
+function renderNotif(){
+ if(!me)return;
+ const ids=[...followers].sort((a,b)=>(followTimes[b]||"")>(followTimes[a]||"")?1:-1);
+ const pend=ids.filter(i=>!following.has(i)).length,nb=$("nbdg");nb.hidden=!pend;nb.textContent=pend;
+ $("notifList").innerHTML=ids.slice(0,60).map(id=>{const u=byId[id];if(!u)return "";const f=following.has(id);
+  return `<div class="box row${f?"":" new"}"><button class="who" data-p="${id}">${avatar(u)}</button><span class="tx"><b>${esc(u.name)}</b><small class="meta">${t("notif_follow")} · ${ago(followTimes[id]||Date.now())}</small></span>${f?`<button class="btn s b" data-act="dm" data-id="${id}">${t("send_dm")}</button>`:`<button class="btn s p" data-act="follow" data-id="${id}">${t("follow_back")}</button>`}</div>`}).join("")||`<p>${t("notif_none")}</p>`;
+}
+async function showProfile(id){
+ const u=byId[id];if(!u||!me)return;viewId=id;const isMe=id===me.id;
+ $("vAv").innerHTML=u.photo_url?`<img src="${esc(u.photo_url)}" alt="">`:esc(u.name[0]);
+ $("vName").textContent=u.name;$("vJob").textContent=u.job||"";
+ $("vBio").textContent=u.bio||(u.job?"":t("no_prof"));
+ $("vFlag").textContent=!isMe&&followers.has(id)?t("follows_you"):"";
+ $("vAct").innerHTML=isMe?`<button class="btn s p" data-act="editme">${t("edit_profile")}</button>`:
+  `<button class="btn s${following.has(id)?"":" p"}" data-act="follow" data-id="${id}">${t(following.has(id)?"following_btn":followers.has(id)?"follow_back":"follow")}</button>`+
+  (mutual(id)?`<button class="btn s b" data-act="dm" data-id="${id}">${t("send_dm")}</button>`:`<small class="meta">${t(following.has(id)?"waiting":"dm_locked")}</small>`);
+ $("vCnt").textContent="";$("vErr").textContent="";if(!$("dView").open)$("dView").showModal();
+ const [a,b]=await Promise.all([sb.from("follows").select("*",{count:"exact",head:true}).eq("following_id",id),sb.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",id)]);
+ if(viewId===id)$("vCnt").innerHTML=`<b>${a.count??0}</b> ${t("n_followers")} · <b>${b.count??0}</b> ${t("n_following")}`;
+}
+
+/* ---------- PESAN (DM) ---------- */
+async function loadConvos(){
+ if(!me)return;
+ const [{data},c]=await Promise.all([
+  sb.from("messages").select("*").or(`sender_id.eq.${me.id},receiver_id.eq.${me.id}`).order("created_at",{ascending:false}).limit(300),
+  sb.from("messages").select("*",{count:"exact",head:true}).eq("receiver_id",me.id).is("read_at",null)]);
+ conv=new Map();
+ (data||[]).forEach(m=>{const o=m.sender_id===me.id?m.receiver_id:m.sender_id;let e=conv.get(o);if(!e){e={last:m,unread:0};conv.set(o,e)}if(m.receiver_id===me.id&&!m.read_at)e.unread++});
+ unread=c.count??0;updateBadge();
+}
+function updateBadge(){const b=$("bdg");b.hidden=!unread;b.textContent=unread>99?"99+":unread}
+function renderMsgs(){
+ if(!me)return;
+ const ids=new Set([...following].filter(x=>followers.has(x)));conv.forEach((_,k)=>ids.add(k));
+ const list=[...ids].map(id=>byId[id]).filter(Boolean).sort((a,b)=>{const x=conv.get(a.id)?.last?.created_at||"",y=conv.get(b.id)?.last?.created_at||"";return x<y?1:x>y?-1:a.name.localeCompare(b.name)});
+ $("msgList").hidden=!!chatWith;$("chat").hidden=!chatWith;
+ if(chatWith)return;
+ $("msgList").innerHTML=`<p class="meta">${t("msg_help")}</p>`+(list.map(u=>{const c=conv.get(u.id);
+  return `<button class="box row" data-act="chat" data-id="${u.id}">${avatar(u)}<span class="tx"><b>${esc(u.name)}</b><small class="meta">${c?esc((c.last.sender_id===me.id?t("you")+": ":"")+c.last.body):""}</small></span>${c?.unread?`<i class="bdg">${c.unread}</i>`:""}</button>`}).join("")||`<p>${t("no_friends")}</p>`);
+}
+async function loadChat(id,quiet){
+ const {data}=await sb.from("messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${id}),and(sender_id.eq.${id},receiver_id.eq.${me.id})`).order("created_at",{ascending:false}).limit(200);
+ if(chatWith!==id)return;
+ const list=(data||[]).reverse();
+ const bx=$("bubbles"),atEnd=bx.scrollHeight-bx.scrollTop-bx.clientHeight<80;
+ bx.innerHTML=list.map(m=>`<div class="bb ${m.sender_id===me.id?"me":"th"}">${esc(m.body)}<small>${clock(m.created_at)}</small></div>`).join("")||`<p class="meta" style="margin:auto">${t("no_msgs")}</p>`;
+ if(!quiet||atEnd)bx.scrollTop=bx.scrollHeight;
+ if(list.some(m=>m.receiver_id===me.id&&!m.read_at)){await sb.from("messages").update({read_at:new Date().toISOString()}).eq("receiver_id",me.id).eq("sender_id",id).is("read_at",null);loadConvos()}
+}
+function openChat(id){
+ const u=byId[id];if(!u)return;chatWith=id;$("chatErr").textContent="";
+ $("chatWho").innerHTML=`<button class="who" data-p="${id}">${avatar(u)}<span><b>${esc(u.name)}</b></span></button>`;
+ $("chatForm").hidden=false;if(!mutual(id)){$("chatErr").textContent=t("not_mutual");$("chatForm").hidden=true}
+ renderMsgs();loadChat(id);
+}
+$("chatBack").onclick=()=>{chatWith=null;loadConvos().then(renderMsgs);renderMsgs()};
+$("chatForm").onsubmit=async e=>{
+ e.preventDefault();const body=$("chatIn").value.trim();if(!body||!chatWith)return;
+ $("chatIn").disabled=true;
+ const r=await sb.from("messages").insert({receiver_id:chatWith,body});
+ $("chatIn").disabled=false;
+ if(r.error){$("chatErr").textContent=mutual(chatWith)?t("err_send"):t("not_mutual");return}
+ $("chatErr").textContent="";$("chatIn").value="";$("chatIn").focus();await loadChat(chatWith);loadConvos();
+};
+function startRealtime(){
+ if(chan)sb.removeChannel(chan);
+ chan=sb.channel("dm-"+me.id).on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:`receiver_id=eq.${me.id}`},()=>{
+  if(chatWith)loadChat(chatWith,true);loadConvos().then(()=>{if(!chatWith)renderMsgs()});
+ }).on("postgres_changes",{event:"INSERT",schema:"public",table:"follows",filter:`following_id=eq.${me.id}`},async ev=>{
+  await loadFollows();renderAlumni();renderMsgs();const u=byId[ev.new?.follower_id];if(u)toast(u.name+" "+t("notif_follow"));if($("dView").open&&viewId)showProfile(viewId);
+ }).subscribe();
+ clearInterval(pollT);
+ pollT=setInterval(()=>{if(document.hidden||!me)return;loadFollows();loadConvos().then(()=>{if(chatWith)loadChat(chatWith,true);else if(tab==="msg")renderMsgs()})},20000);
+}
+
+/* ---------- AKUN ---------- */
+function openMe(){
+ $("meName").value=me.name;$("meJob").value=me.job||"";$("meBio").value=me.bio||"";$("dpNote").hidden=!me.dp;$("merr").textContent="";
+ $("meAv").innerHTML=me.photo_url?`<img src="${esc(me.photo_url)}" alt="">`:esc(me.name[0]);
+ $("dMe").showModal();
+}
+$("meBtn").onclick=openMe;
+$("dMe").addEventListener("close",hidePw);
+$("saveProf").onclick=async()=>{const n=$("meName").value.trim();if(!n)return;
+ const {error}=await sb.from("profiles").update({name:n.slice(0,60),job:$("meJob").value.trim().slice(0,80),bio:$("meBio").value.trim().slice(0,300)}).eq("id",me.id);
+ $("merr").textContent=error?t("err_save"):t("ok_saved");if(!error)await refreshMe()};
+$("savePw").onclick=async()=>{const p=$("np").value;if(p.length<6)return $("merr").textContent=t("pw_min");
+ const r=await sb.auth.updateUser({password:p});if(r.error)return $("merr").textContent=t("err_pw");
+ await sb.from("profiles").update({dp:false}).eq("id",me.id);$("np").value="";$("merr").textContent=t("pw_ok");await refreshMe()};
+async function refreshMe(){await loadUsers();me=byId[me.id];renderHeader();renderAlumni();renderOrg();$("dpNote").hidden=!me.dp}
+$("mePhoto").onclick=()=>{$("pf").value="";$("pf").click()};
+async function avatarBlob(file){
+ let bm;try{bm=await createImageBitmap(file,{imageOrientation:"from-image"})}catch(e){bm=await createImageBitmap(file)}
+ const s=400,c=document.createElement("canvas");c.width=c.height=s;const k=Math.max(s/bm.width,s/bm.height),w=bm.width*k,h=bm.height*k;
+ c.getContext("2d").drawImage(bm,(s-w)/2,(s-h)/2,w,h);return new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(),"image/jpeg",.85));
+}
+$("pf").onchange=async e=>{const f=e.target.files[0];if(!f||!me)return;
+ try{const b=await avatarBlob(f),path=me.id+"/avatar.jpg";
+  const up=await sb.storage.from("avatars").upload(path,b,{upsert:true,contentType:"image/jpeg"});if(up.error)throw up.error;
+  const url=sb.storage.from("avatars").getPublicUrl(path).data.publicUrl+"?v="+Date.now();
+  const r=await sb.from("profiles").update({photo_url:url}).eq("id",me.id);if(r.error)throw r.error;
+  $("merr").textContent=t("photo_ok");await refreshMe();$("meAv").innerHTML=`<img src="${esc(url)}" alt="">`;
+ }catch(x){$("merr").textContent=t("photo_err")}};
+
+/* ---------- EDIT BRANDING ---------- */
+let savedBrand=null,brandSaved=false;
+function swatches(el,list,inp){el.innerHTML=list.map(c=>`<button type="button" style="background:${c}" data-c="${c}" aria-label="${c}"></button>`).join("");
+ el.onclick=e=>{const b=e.target.closest("[data-c]");if(b){inp.value=b.dataset.c;preview()}}}
+function preview(){applyBrand({accent:$("cA").value,bg:$("cB").value})}
+swatches($("swA"),ACC_PRESETS,$("cA"));swatches($("swB"),BG_PRESETS,$("cB"));
+$("cA").oninput=$("cB").oninput=preview;
+$("brandBtn").onclick=()=>{$("dMe").close();savedBrand={...brand};brandSaved=false;$("cA").value=brand.accent;$("cB").value=brand.bg;$("berr").textContent="";$("dBrand").showModal()};
+$("bReset").onclick=()=>{$("cA").value=DEF.accent;$("cB").value=DEF.bg;preview()};
+$("bCancel").onclick=()=>$("dBrand").close();
+$("dBrand").addEventListener("close",()=>{if(!brandSaved&&savedBrand)applyBrand(savedBrand)});
+$("bSave").onclick=async()=>{
+ const a=$("cA").value,b=$("cB").value;
+ const {error}=await sb.from("profiles").update({accent:a,bg:b}).eq("id",me.id);
+ if(error)return $("berr").textContent=t("err_save");
+ me.accent=a;me.bg=b;applyBrand({accent:a,bg:b});saveLocal();brandSaved=true;$("dBrand").close();
+};
+
+/* ---------- MULAI ---------- */
+(async function boot(){
+ const l=LS.get("ma28.lang");setLang(I18N[l]?l:"id",false);
+ const ok=await loadUsers();
+ let s=null;try{s=(await sb.auth.getSession()).data.session}catch(e){}
+ session=s;
+ if(s&&ok)await enterApp(false);else{showAuth();if(!ok)$("lerr").textContent=t("err_load")}
+})();
+</script>
+</body>
+</html>
