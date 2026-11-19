@@ -149,6 +149,21 @@ dialog h3{font-size:21px;margin-bottom:10px}
 .sw button{width:34px;height:34px;border:3px solid var(--bd);border-radius:var(--r);cursor:pointer;box-shadow:2px 2px 0 var(--sh);padding:0}
 .lab{font-weight:700;font-size:14px;display:block;margin-top:8px}
 @media (max-width:700px){.kids{grid-template-columns:1fr}.kids::before{display:none}}
+/* profil halaman penuh */
+.pf{padding:22px 18px;text-align:center;margin-bottom:18px}
+.pf h3{font-size:24px;margin:4px 0}
+.pf .bio{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 10px}
+.pf .stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+.pf .stats button{background:none;border:0;cursor:pointer;font-weight:700;padding:2px 8px;color:var(--ink)}
+.pf .stats b{font-size:18px}
+.pf .pa{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:8px}
+.chips button:disabled{opacity:.5;cursor:not-allowed}
+.row .nt{display:block;overflow-wrap:anywhere;line-height:1.35}
+.row.go{cursor:pointer}
+/* kamera */
+.camv{position:relative;background:#000;border:3px solid var(--bd);border-radius:var(--r);overflow:hidden;aspect-ratio:3/4;max-height:58svh;margin:0 auto 10px}
+.camv video{width:100%;height:100%;object-fit:cover;display:block}
+.camv .rec{position:absolute;top:8px;left:8px;background:#e11d48;color:#fff;font:700 13px/1 var(--f);padding:5px 9px;border-radius:99px;border:2px solid #111}
 </style>
 </head>
 <body>
@@ -168,6 +183,7 @@ dialog h3{font-size:21px;margin-bottom:10px}
 <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
 <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></symbol>
 <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></symbol>
 </svg>
 
 <div class="toast" id="toast" hidden role="status"></div>
@@ -222,6 +238,7 @@ dialog h3{font-size:21px;margin-bottom:10px}
 <div class="r">
 <label class="btn s" for="pFile" tabindex="0" id="pickBtn"><svg class="ic"><use href="#i-img"/></svg><span data-i18n="add_media"></span></label>
 <input type="file" id="pFile" accept="image/*,video/*">
+<button type="button" class="btn s b" id="camBtn"><svg class="ic"><use href="#i-cam"/></svg><span data-i18n="camera"></span></button>
 <select id="pCat" aria-label="Kategori"></select>
 <button class="btn p s" id="postBtn" style="margin-left:auto" data-i18n="post_btn"></button>
 </div>
@@ -230,6 +247,18 @@ dialog h3{font-size:21px;margin-bottom:10px}
 <div class="chips" id="chips"></div>
 <div id="feed"></div>
 <div style="text-align:center"><button class="btn" id="moreBtn" hidden data-i18n="more"></button></div>
+</div></section>
+
+<section data-view="profile" hidden><div class="col">
+<button class="btn s" id="pfBack" style="margin-bottom:14px"><svg class="ic"><use href="#i-back"/></svg><span data-i18n="back"></span></button>
+<div class="box pf" id="pfHead"></div>
+<div class="chips" id="pfTabs"></div>
+<div id="pfBody"></div>
+</div></section>
+
+<section data-view="post" hidden><div class="col">
+<button class="btn s" id="postBack" style="margin-bottom:14px"><svg class="ic"><use href="#i-back"/></svg><span data-i18n="back"></span></button>
+<div id="onePost"></div>
 </div></section>
 
 <section data-view="notif" hidden><div class="col">
@@ -274,22 +303,29 @@ dialog h3{font-size:21px;margin-bottom:10px}
 </div>
 
 <!-- ============ DIALOG ============ -->
-<dialog id="dView">
-<div class="av xl" id="vAv"></div>
-<h3 id="vName" style="text-align:center"></h3>
-<p id="vJob" style="text-align:center;font-weight:700;margin:0 0 4px"></p>
-<p id="vCnt" class="meta" style="text-align:center;margin:0 0 4px"></p>
-<p id="vFlag" class="meta" style="text-align:center;margin:0 0 8px"></p>
-<p id="vBio" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
-<div id="vAct" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px"></div>
-<p class="err" id="vErr" role="alert" style="min-height:0;font-size:13px;margin:0 0 8px"></p>
-<button class="btn" data-x data-i18n="close"></button>
+<dialog id="dCam">
+<h3 data-i18n="camera"></h3>
+<div class="camv"><video id="camVid" autoplay playsinline muted></video><span class="rec" id="camTimer" hidden></span></div>
+<div class="chips" id="camModes"><button type="button" data-m="photo" data-i18n="cam_photo"></button><button type="button" data-m="video" data-i18n="cam_video"></button></div>
+<div class="err" id="camErr" role="alert"></div>
+<div id="camFb" hidden style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+<label class="btn s" for="camPhotoIn" tabindex="0" data-i18n="cam_fb_photo"></label>
+<label class="btn s" for="camVideoIn" tabindex="0" data-i18n="cam_fb_video"></label>
+</div>
+<input type="file" id="camPhotoIn" accept="image/*" capture="environment">
+<input type="file" id="camVideoIn" accept="video/*" capture="environment">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button type="button" class="btn p" id="camShot"></button>
+<button type="button" class="btn s b" id="camFlip" data-i18n="cam_flip"></button>
+<button type="button" class="btn s" data-x data-i18n="close"></button>
+</div>
 </dialog>
 
 <dialog id="dMe">
 <h3 data-i18n="acc_title"></h3>
 <div class="note" id="dpNote" hidden data-i18n="pw_note"></div>
 <div style="display:flex;gap:12px;align-items:center;margin:8px 0"><div class="av" id="meAv" style="width:70px;height:70px"></div><button class="btn b s" id="mePhoto" data-i18n="photo_btn"></button></div>
+<button class="btn s b" id="seeProf" data-i18n="see_profile"></button>
 <input id="meName" data-ph="name_ph" maxlength="60">
 <input id="meJob" data-ph="job_ph" maxlength="80">
 <textarea id="meBio" rows="3" data-ph="bio_ph" maxlength="300"></textarea>
@@ -344,7 +380,7 @@ msg_title:"Pesan",msg_help:"Kamu hanya bisa berkirim pesan dengan alumni yang sa
 acc_title:"Akun Saya",pw_note:"Password kamu masih bawaan. Ganti sekarang ya.",photo_btn:"Ganti Foto",name_ph:"Nama",job_ph:"Kesibukan, misal: Kuliah di UI atau Kerja di Bogor",bio_ph:"Tentang kamu (tampil ke semua alumni)",save_prof:"Simpan Profil",ok_saved:"Tersimpan.",err_save:"Gagal menyimpan.",newpw_ph:"Password baru (min. 6 karakter)",change_pw:"Ganti Password",pw_min:"Minimal 6 karakter.",pw_ok:"Password diganti.",err_pw:"Gagal mengganti password.",logout:"Keluar",photo_ok:"Foto tersimpan.",photo_err:"Foto gagal diunggah.",
 brand_btn:"Edit Branding",brand_title:"Edit Branding",brand_accent:"Warna aksen",brand_bg:"Warna latar",brand_reset:"Kembalikan bawaan",brand_save:"Simpan Branding",brand_ok:"Branding tersimpan.",brand_hint:"Warna ini hanya berlaku untuk akunmu.",cancel:"Batal",
 tab_notif:"Notifikasi",notif_title:"Notifikasi",notif_none:"Belum ada notifikasi.",notif_follow:"mulai mengikutimu",follow_back:"Ikuti Balik",waiting:"Menunggu diikuti balik untuk bisa chat.",err_follow:"Gagal memproses. Pastikan migration-v2.sql sudah dijalankan.",
-show_pw:"Tampilkan password",hide_pw:"Sembunyikan password",just_now:"baru saja",ago_m:"{n} menit lalu",ago_h:"{n} jam lalu",ago_d:"{n} hari lalu"},
+show_pw:"Tampilkan password",hide_pw:"Sembunyikan password",just_now:"baru saja",ago_m:"{n} menit lalu",ago_h:"{n} jam lalu",ago_d:"{n} hari lalu",camera:"Kamera",cam_photo:"Foto",cam_video:"Video",cam_shoot:"Ambil Foto",cam_rec:"Mulai Rekam",cam_stop:"Berhenti",cam_flip:"Balik Kamera",cam_denied:"Kamera tidak bisa dibuka. Izinkan akses kamera, atau pakai tombol di bawah.",cam_fb_photo:"Foto dari kamera HP",cam_fb_video:"Video dari kamera HP",cam_long:"Video kamera maksimal 45 detik.",cam_norec:"Browser ini belum mendukung rekam video di sini. Pakai tombol Video dari kamera HP.",see_profile:"Lihat Profil",ptab_posts:"Postingan",ptab_followers:"Pengikut",ptab_following:"Mengikuti",n_posts:"postingan",no_posts_user:"Belum ada postingan.",no_followers:"Belum ada pengikut.",no_following:"Belum mengikuti siapa pun.",no_user:"Profil tidak ditemukan.",post_gone:"Postingan ini sudah dihapus.",nt_follow:"{n} mulai mengikutimu",nt_new_post:"{n} membuat postingan baru",nt_like_post:"{n} menyukai postinganmu",nt_like_post_m:"{n} dan {m} lainnya menyukai postinganmu",nt_comment:"{n} mengomentari postinganmu",err_notif:"Notifikasi belum aktif. Jalankan migration-v3-tahap1.sql di Supabase."},
 
 en:{boot:"Loading…",login_title:"Log into <span>Ma28iyyah</span>",u_ph:"Username (full name)",p_ph:"Password",login_btn:"Log in",login_help:"Forgot your password? Contact the Maziyyah committee.",err_name:"Username not found.",err_pass:"Wrong password.",err_load:"Data hasn't loaded. Please reload the page.",wait:"Working…",
 tab_home:"Home",tab_alumni:"Alumni",tab_org:"Structure",tab_about:"About",tab_msg:"Messages",tab_saved:"Saved",
@@ -361,7 +397,7 @@ msg_title:"Messages",msg_help:"You can only message alumni who follow you back."
 acc_title:"My Account",pw_note:"You're still using the default password. Please change it.",photo_btn:"Change Photo",name_ph:"Name",job_ph:"What you're up to, e.g. Studying at UI or Working in Bogor",bio_ph:"About you (visible to all alumni)",save_prof:"Save Profile",ok_saved:"Saved.",err_save:"Couldn't save.",newpw_ph:"New password (min. 6 characters)",change_pw:"Change Password",pw_min:"At least 6 characters.",pw_ok:"Password changed.",err_pw:"Couldn't change the password.",logout:"Log out",photo_ok:"Photo saved.",photo_err:"Photo upload failed.",
 brand_btn:"Edit Branding",brand_title:"Edit Branding",brand_accent:"Accent color",brand_bg:"Background color",brand_reset:"Reset to default",brand_save:"Save Branding",brand_ok:"Branding saved.",brand_hint:"These colors only apply to your account.",cancel:"Cancel",
 tab_notif:"Notifications",notif_title:"Notifications",notif_none:"No notifications yet.",notif_follow:"started following you",follow_back:"Follow Back",waiting:"Waiting for them to follow back before you can chat.",err_follow:"Couldn't complete that. Make sure migration-v2.sql has been run.",
-show_pw:"Show password",hide_pw:"Hide password",just_now:"just now",ago_m:"{n} min ago",ago_h:"{n} h ago",ago_d:"{n} d ago"},
+show_pw:"Show password",hide_pw:"Hide password",just_now:"just now",ago_m:"{n} min ago",ago_h:"{n} h ago",ago_d:"{n} d ago",camera:"Camera",cam_photo:"Photo",cam_video:"Video",cam_shoot:"Take Photo",cam_rec:"Start Recording",cam_stop:"Stop",cam_flip:"Flip Camera",cam_denied:"Couldn't open the camera. Allow camera access, or use the buttons below.",cam_fb_photo:"Photo from phone camera",cam_fb_video:"Video from phone camera",cam_long:"Camera videos can be 45 seconds at most.",cam_norec:"This browser can't record video here. Use the phone-camera video button.",see_profile:"View Profile",ptab_posts:"Posts",ptab_followers:"Followers",ptab_following:"Following",n_posts:"posts",no_posts_user:"No posts yet.",no_followers:"No followers yet.",no_following:"Not following anyone yet.",no_user:"Profile not found.",post_gone:"This post has been deleted.",nt_follow:"{n} started following you",nt_new_post:"{n} made a new post",nt_like_post:"{n} liked your post",nt_like_post_m:"{n} and {m} others liked your post",nt_comment:"{n} commented on your post",err_notif:"Notifications aren't active yet. Run migration-v3-tahap1.sql in Supabase."},
 
 ko:{boot:"불러오는 중…",login_title:"<span>Ma28iyyah</span> 로그인",u_ph:"사용자 이름 (전체 이름)",p_ph:"비밀번호",login_btn:"로그인",login_help:"비밀번호를 잊으셨나요? 마지야 운영진에게 문의하세요.",err_name:"사용자 이름을 찾을 수 없습니다.",err_pass:"비밀번호가 틀렸습니다.",err_load:"데이터를 불러오지 못했습니다. 페이지를 새로고침하세요.",wait:"처리 중…",
 tab_home:"홈",tab_alumni:"동문",tab_org:"조직",tab_about:"소개",tab_msg:"메시지",tab_saved:"저장됨",
@@ -378,7 +414,7 @@ msg_title:"메시지",msg_help:"서로 팔로우한 동문에게만 메시지를
 acc_title:"내 계정",pw_note:"아직 기본 비밀번호를 사용 중입니다. 지금 변경해 주세요.",photo_btn:"사진 변경",name_ph:"이름",job_ph:"근황 (예: UI 대학 재학 중, 보고르에서 근무)",bio_ph:"자기소개 (모든 동문에게 공개)",save_prof:"프로필 저장",ok_saved:"저장되었습니다.",err_save:"저장하지 못했습니다.",newpw_ph:"새 비밀번호 (6자 이상)",change_pw:"비밀번호 변경",pw_min:"6자 이상 입력하세요.",pw_ok:"비밀번호가 변경되었습니다.",err_pw:"비밀번호를 변경하지 못했습니다.",logout:"로그아웃",photo_ok:"사진이 저장되었습니다.",photo_err:"사진 업로드에 실패했습니다.",
 brand_btn:"브랜딩 편집",brand_title:"브랜딩 편집",brand_accent:"강조 색상",brand_bg:"배경 색상",brand_reset:"기본값으로 되돌리기",brand_save:"브랜딩 저장",brand_ok:"브랜딩이 저장되었습니다.",brand_hint:"이 색상은 내 계정에만 적용됩니다.",cancel:"취소",
 tab_notif:"알림",notif_title:"알림",notif_none:"아직 알림이 없습니다.",notif_follow:"님이 회원님을 팔로우하기 시작했습니다",follow_back:"맞팔로우",waiting:"상대가 팔로우해 주면 채팅할 수 있습니다.",err_follow:"처리하지 못했습니다. migration-v2.sql을 실행했는지 확인하세요.",
-show_pw:"비밀번호 보기",hide_pw:"비밀번호 숨기기",just_now:"방금",ago_m:"{n}분 전",ago_h:"{n}시간 전",ago_d:"{n}일 전"},
+show_pw:"비밀번호 보기",hide_pw:"비밀번호 숨기기",just_now:"방금",ago_m:"{n}분 전",ago_h:"{n}시간 전",ago_d:"{n}일 전",camera:"카메라",cam_photo:"사진",cam_video:"동영상",cam_shoot:"사진 찍기",cam_rec:"녹화 시작",cam_stop:"중지",cam_flip:"카메라 전환",cam_denied:"카메라를 열 수 없습니다. 카메라 접근을 허용하거나 아래 버튼을 사용하세요.",cam_fb_photo:"휴대폰 카메라로 사진",cam_fb_video:"휴대폰 카메라로 동영상",cam_long:"카메라 동영상은 최대 45초까지 가능합니다.",cam_norec:"이 브라우저에서는 동영상 녹화를 지원하지 않습니다. 휴대폰 카메라 동영상 버튼을 사용하세요.",see_profile:"프로필 보기",ptab_posts:"게시물",ptab_followers:"팔로워",ptab_following:"팔로잉",n_posts:"게시물",no_posts_user:"아직 게시물이 없습니다.",no_followers:"아직 팔로워가 없습니다.",no_following:"아직 팔로우한 사람이 없습니다.",no_user:"프로필을 찾을 수 없습니다.",post_gone:"이 게시물은 삭제되었습니다.",nt_follow:"{n}님이 회원님을 팔로우하기 시작했습니다",nt_new_post:"{n}님이 새 게시물을 올렸습니다",nt_like_post:"{n}님이 회원님의 게시물을 좋아합니다",nt_like_post_m:"{n}님 외 {m}명이 회원님의 게시물을 좋아합니다",nt_comment:"{n}님이 회원님의 게시물에 댓글을 남겼습니다",err_notif:"알림이 아직 활성화되지 않았습니다. Supabase에서 migration-v3-tahap1.sql을 실행하세요."},
 
 ja:{boot:"読み込み中…",login_title:"<span>Ma28iyyah</span> にログイン",u_ph:"ユーザー名（フルネーム）",p_ph:"パスワード",login_btn:"ログイン",login_help:"パスワードを忘れた場合は、マズィーヤの運営までご連絡ください。",err_name:"ユーザー名が見つかりません。",err_pass:"パスワードが違います。",err_load:"データを読み込めませんでした。ページを再読み込みしてください。",wait:"処理中…",
 tab_home:"ホーム",tab_alumni:"卒業生",tab_org:"組織",tab_about:"概要",tab_msg:"メッセージ",tab_saved:"保存済み",
@@ -395,7 +431,7 @@ msg_title:"メッセージ",msg_help:"お互いにフォローしている卒業
 acc_title:"マイアカウント",pw_note:"初期パスワードのままです。今すぐ変更してください。",photo_btn:"写真を変更",name_ph:"名前",job_ph:"近況（例：UIで在学中、ボゴールで勤務）",bio_ph:"自己紹介（全卒業生に表示）",save_prof:"プロフィールを保存",ok_saved:"保存しました。",err_save:"保存できませんでした。",newpw_ph:"新しいパスワード（6文字以上）",change_pw:"パスワードを変更",pw_min:"6文字以上で入力してください。",pw_ok:"パスワードを変更しました。",err_pw:"パスワードを変更できませんでした。",logout:"ログアウト",photo_ok:"写真を保存しました。",photo_err:"写真のアップロードに失敗しました。",
 brand_btn:"ブランディング編集",brand_title:"ブランディング編集",brand_accent:"アクセントカラー",brand_bg:"背景色",brand_reset:"初期設定に戻す",brand_save:"ブランディングを保存",brand_ok:"ブランディングを保存しました。",brand_hint:"この色はあなたのアカウントだけに適用されます。",cancel:"キャンセル",
 tab_notif:"通知",notif_title:"通知",notif_none:"通知はまだありません。",notif_follow:"さんがあなたをフォローしました",follow_back:"フォローバック",waiting:"相手がフォローバックするとチャットできます。",err_follow:"処理できませんでした。migration-v2.sql を実行済みか確認してください。",
-show_pw:"パスワードを表示",hide_pw:"パスワードを隠す",just_now:"たった今",ago_m:"{n}分前",ago_h:"{n}時間前",ago_d:"{n}日前"},
+show_pw:"パスワードを表示",hide_pw:"パスワードを隠す",just_now:"たった今",ago_m:"{n}分前",ago_h:"{n}時間前",ago_d:"{n}日前",camera:"カメラ",cam_photo:"写真",cam_video:"動画",cam_shoot:"写真を撮る",cam_rec:"録画開始",cam_stop:"停止",cam_flip:"カメラ切替",cam_denied:"カメラを開けませんでした。カメラへのアクセスを許可するか、下のボタンを使ってください。",cam_fb_photo:"スマホのカメラで写真",cam_fb_video:"スマホのカメラで動画",cam_long:"カメラの動画は最大45秒までです。",cam_norec:"このブラウザでは動画録画に対応していません。スマホのカメラ動画ボタンを使ってください。",see_profile:"プロフィールを見る",ptab_posts:"投稿",ptab_followers:"フォロワー",ptab_following:"フォロー中",n_posts:"投稿",no_posts_user:"まだ投稿がありません。",no_followers:"まだフォロワーがいません。",no_following:"まだ誰もフォローしていません。",no_user:"プロフィールが見つかりません。",post_gone:"この投稿は削除されました。",nt_follow:"{n}さんがあなたをフォローしました",nt_new_post:"{n}さんが新しい投稿をしました",nt_like_post:"{n}さんがあなたの投稿にいいねしました",nt_like_post_m:"{n}さんほか{m}人があなたの投稿にいいねしました",nt_comment:"{n}さんがあなたの投稿にコメントしました",err_notif:"通知はまだ有効ではありません。Supabaseで migration-v3-tahap1.sql を実行してください。"},
 
 su:{boot:"Keur ngamuat…",login_title:"Lebet ka <span>Ma28iyyah</span>",u_ph:"Username (nami lengkep)",p_ph:"Kecap sandi",login_btn:"Lebet",login_help:"Hilap kecap sandi? Hubungi pengurus Maziyyah.",err_name:"Username teu kapendak.",err_pass:"Kecap sandi lepat.",err_load:"Data acan kamuat. Cobi muat deui kaca ieu.",wait:"Keur diprosés…",
 tab_home:"Tepas",tab_alumni:"Alumni",tab_org:"Struktur",tab_about:"Ngeunaan",tab_msg:"Pesen",tab_saved:"Disimpen",
@@ -412,7 +448,7 @@ msg_title:"Pesen",msg_help:"Anjeun ngan bisa ngirim pesen ka alumni anu silih tu
 acc_title:"Akun Kuring",pw_note:"Kecap sandi anjeun masih bawaan. Gantian ayeuna enya.",photo_btn:"Ganti Poto",name_ph:"Nami",job_ph:"Kasibukan, upamana: Kuliah di UI atawa Digawé di Bogor",bio_ph:"Ngeunaan anjeun (katémbong ku sadaya alumni)",save_prof:"Simpen Profil",ok_saved:"Parantos disimpen.",err_save:"Gagal nyimpen.",newpw_ph:"Kecap sandi anyar (min. 6 karakter)",change_pw:"Ganti Kecap Sandi",pw_min:"Minimal 6 karakter.",pw_ok:"Kecap sandi diganti.",err_pw:"Gagal ngaganti kecap sandi.",logout:"Kaluar",photo_ok:"Poto disimpen.",photo_err:"Poto gagal diunggah.",
 brand_btn:"Édit Branding",brand_title:"Édit Branding",brand_accent:"Warna aksén",brand_bg:"Warna latar",brand_reset:"Balikeun ka bawaan",brand_save:"Simpen Branding",brand_ok:"Branding disimpen.",brand_hint:"Warna ieu ngan lumaku pikeun akun anjeun.",cancel:"Bolay",
 tab_notif:"Béwara",notif_title:"Béwara",notif_none:"Acan aya béwara.",notif_follow:"mimiti nuturkeun anjeun",follow_back:"Turutan Balik",waiting:"Antosan dituturkeun balik pikeun bisa chat.",err_follow:"Gagal diprosés. Pastikeun migration-v2.sql geus dijalankeun.",
-show_pw:"Témbongkeun kecap sandi",hide_pw:"Sumputkeun kecap sandi",just_now:"nembé",ago_m:"{n} menit kapengker",ago_h:"{n} jam kapengker",ago_d:"{n} poé kapengker"},
+show_pw:"Témbongkeun kecap sandi",hide_pw:"Sumputkeun kecap sandi",just_now:"nembé",ago_m:"{n} menit kapengker",ago_h:"{n} jam kapengker",ago_d:"{n} poé kapengker",camera:"Kaméra",cam_photo:"Poto",cam_video:"Pidéo",cam_shoot:"Candak Poto",cam_rec:"Mimitian Rékam",cam_stop:"Eureun",cam_flip:"Walik Kaméra",cam_denied:"Kaméra teu bisa dibuka. Idinan aksés kaméra, atawa paké tombol di handap.",cam_fb_photo:"Poto tina kaméra HP",cam_fb_video:"Pidéo tina kaméra HP",cam_long:"Pidéo kaméra maksimal 45 detik.",cam_norec:"Browser ieu acan ngarojong rékam pidéo di dieu. Paké tombol Pidéo tina kaméra HP.",see_profile:"Tingali Profil",ptab_posts:"Postingan",ptab_followers:"Nu Nuturkeun",ptab_following:"Nuturkeun",n_posts:"postingan",no_posts_user:"Acan aya postingan.",no_followers:"Acan aya nu nuturkeun.",no_following:"Acan nuturkeun saha waé.",no_user:"Profil teu kapendak.",post_gone:"Postingan ieu geus dihapus.",nt_follow:"{n} mimiti nuturkeun anjeun",nt_new_post:"{n} nyieun postingan anyar",nt_like_post:"{n} resep kana postingan anjeun",nt_like_post_m:"{n} jeung {m} nu séjén resep kana postingan anjeun",nt_comment:"{n} méré koméntar dina postingan anjeun",err_notif:"Béwara acan aktif. Jalankeun migration-v3-tahap1.sql di Supabase."},
 
 jv:{boot:"Lagi ngunggahake…",login_title:"Mlebu menyang <span>Ma28iyyah</span>",u_ph:"Username (jeneng lengkap)",p_ph:"Tembung sandhi",login_btn:"Mlebu",login_help:"Lali tembung sandhi? Hubungi pengurus Maziyyah.",err_name:"Username ora ketemu.",err_pass:"Tembung sandhi salah.",err_load:"Data durung kaunggah. Coba muat maneh kaca iki.",wait:"Lagi diproses…",
 tab_home:"Ngarep",tab_alumni:"Alumni",tab_org:"Struktur",tab_about:"Bab Kita",tab_msg:"Pesen",tab_saved:"Disimpen",
@@ -429,7 +465,7 @@ msg_title:"Pesen",msg_help:"Sampeyan mung bisa ngirim pesen marang alumni sing s
 acc_title:"Akunku",pw_note:"Tembung sandhimu isih bawaan. Gantinen saiki ya.",photo_btn:"Ganti Foto",name_ph:"Jeneng",job_ph:"Kegiyatan, upamane: Kuliah ing UI utawa Kerja ing Bogor",bio_ph:"Bab sampeyan (katon dening kabeh alumni)",save_prof:"Simpen Profil",ok_saved:"Wis disimpen.",err_save:"Gagal nyimpen.",newpw_ph:"Tembung sandhi anyar (min. 6 karakter)",change_pw:"Ganti Tembung Sandhi",pw_min:"Minimal 6 karakter.",pw_ok:"Tembung sandhi diganti.",err_pw:"Gagal ngganti tembung sandhi.",logout:"Metu",photo_ok:"Foto disimpen.",photo_err:"Foto gagal diunggah.",
 brand_btn:"Edit Branding",brand_title:"Edit Branding",brand_accent:"Warna aksen",brand_bg:"Warna latar",brand_reset:"Balekna menyang bawaan",brand_save:"Simpen Branding",brand_ok:"Branding disimpen.",brand_hint:"Warna iki mung ditrapake kanggo akunmu.",cancel:"Batal",
 tab_notif:"Kabar",notif_title:"Kabar",notif_none:"Durung ana kabar.",notif_follow:"wiwit nutugake sampeyan",follow_back:"Tutugna Bali",waiting:"Ngenteni ditutugake bali supaya bisa chat.",err_follow:"Gagal diproses. Priksa menawa migration-v2.sql wis dijalanake.",
-show_pw:"Tuduhna tembung sandhi",hide_pw:"Singitna tembung sandhi",just_now:"saweg wae",ago_m:"{n} menit kepungkur",ago_h:"{n} jam kepungkur",ago_d:"{n} dina kepungkur"}
+show_pw:"Tuduhna tembung sandhi",hide_pw:"Singitna tembung sandhi",just_now:"saweg wae",ago_m:"{n} menit kepungkur",ago_h:"{n} jam kepungkur",ago_d:"{n} dina kepungkur",camera:"Kamera",cam_photo:"Foto",cam_video:"Video",cam_shoot:"Jepret Foto",cam_rec:"Miwiti Rekam",cam_stop:"Mandheg",cam_flip:"Walik Kamera",cam_denied:"Kamera ora bisa dibukak. Idinake akses kamera, utawa nganggo tombol ing ngisor.",cam_fb_photo:"Foto saka kamera HP",cam_fb_video:"Video saka kamera HP",cam_long:"Video kamera maksimal 45 detik.",cam_norec:"Browser iki durung ndhukung rekam video ing kene. Gunakna tombol Video saka kamera HP.",see_profile:"Deleng Profil",ptab_posts:"Postingan",ptab_followers:"Sing Nutugake",ptab_following:"Nutugake",n_posts:"postingan",no_posts_user:"Durung ana postingan.",no_followers:"Durung ana sing nutugake.",no_following:"Durung nutugake sapa wae.",no_user:"Profil ora ketemu.",post_gone:"Postingan iki wis dibusak.",nt_follow:"{n} wiwit nutugake sampeyan",nt_new_post:"{n} gawe postingan anyar",nt_like_post:"{n} seneng karo postingan sampeyan",nt_like_post_m:"{n} lan {m} liyane seneng karo postingan sampeyan",nt_comment:"{n} menehi komentar ing postingan sampeyan",err_notif:"Kabar durung aktif. Jalanake migration-v3-tahap1.sql ing Supabase."}
 };
 
 /* ---------- DATA TETAP ---------- */
@@ -507,6 +543,7 @@ const P=new Map();let feedIds=[],savedIds=[],cat="all",limit=20,hasMore=false;
 let myLikes=new Set(),mySaves=new Set(),following=new Set(),followers=new Set(),followTimes={};
 const cmts={},openCm=new Set();
 let tab="home",pendingChat=null,chatWith=null,conv=new Map(),unread=0,pending=null,chan=null,viewId=null,pollT=null,busy=false;
+let pf=null,postOpenId=null,notifs=[],nfresh=new Set(),notifOk=true;
 
 /* ---------- MASUK / KELUAR ---------- */
 async function loadUsers(){
@@ -534,7 +571,7 @@ async function enterApp(fresh){
  $("boot").hidden=true;$("auth").hidden=true;$("app").hidden=false;
  setLang(I18N[me.lang]&&me.lang?me.lang:lang,false);
  renderHeader();
- await Promise.all([loadFollows(),loadPosts(),loadConvos()]);
+ await Promise.all([loadFollows(),loadPosts(),loadConvos(),loadNotifs()]);
  route();
  startRealtime();
  if(fresh&&me.dp)openMe();
@@ -547,18 +584,26 @@ sb.auth.onAuthStateChange(ev=>{if(ev==="SIGNED_OUT"&&me)location.reload()});
 const TABS=["home","alumni","msg","notif","saved","org","about"];
 function route(){
  if(!me)return;
- const h=location.hash.slice(1);tab=TABS.includes(h)?h:"home";
- document.querySelectorAll("[data-view]").forEach(s=>s.hidden=s.dataset.view!==tab);
- document.querySelectorAll(".tab").forEach(a=>{if(a.dataset.tab===tab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
- if(tab==="saved")loadSaved();
- if(tab==="msg"){if(pendingChat){const id=pendingChat;pendingChat=null;openChat(id);loadConvos().then(()=>{if(!chatWith)renderMsgs()})}else{chatWith=null;loadConvos().then(renderMsgs)}}
+ const h=location.hash.slice(1);let view="home",arg=null;
+ if(/^u-[A-Za-z0-9]+$/.test(h)){view="profile";arg=h.slice(2).toLowerCase()}
+ else if(/^post-\d+$/.test(h)){view="post";arg=+h.slice(5)}
+ else if(TABS.includes(h))view=h;
+ if(postOpenId&&!(view==="post"&&arg===postOpenId)){openCm.delete(postOpenId);postOpenId=null}
+ tab=view;if(view!=="notif")nfresh.clear();
+ document.querySelectorAll("[data-view]").forEach(s=>s.hidden=s.dataset.view!==view);
+ document.querySelectorAll(".tab").forEach(a=>{if(a.dataset.tab===view)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+ if(view==="saved")loadSaved();
+ if(view==="notif")loadNotifs().then(markNotifsRead);
+ if(view==="profile")openProfilePage(arg);
+ if(view==="post")openPostPage(arg);
+ if(view==="msg"){if(pendingChat){const id=pendingChat;pendingChat=null;openChat(id);loadConvos().then(()=>{if(!chatWith)renderMsgs()})}else{chatWith=null;loadConvos().then(renderMsgs)}}
  scrollTo(0,0);renderMsgs();
 }
 addEventListener("hashchange",route);
 
 /* ---------- RENDER UMUM ---------- */
 function renderAll(){
- if(me){renderHeader();renderAlumni();renderOrg();renderAbout();renderFeed();renderSaved();renderMsgs();renderChips();renderNotif()}
+ if(me){renderHeader();renderAlumni();renderOrg();renderAbout();renderFeed();renderSaved();renderMsgs();renderChips();renderNotif();renderProfile()}
  else renderAbout();
 }
 function renderHeader(){
@@ -641,8 +686,9 @@ async function openComments(id,scope){
 }
 function stripStorage(url){const m=/\/object\/public\/media\/(.+)$/.exec(url||"");return m?decodeURIComponent(m[1]):null}
 document.addEventListener("click",async e=>{
- const pb=e.target.closest("[data-p]");if(pb){showProfile(pb.dataset.p);return}
- const b=e.target.closest("[data-act]");if(!b)return;
+ const pt=e.target.closest("[data-ptab]");if(pt){setPTab(pt.dataset.ptab);return}
+  const pb=e.target.closest("[data-p]");if(pb){showProfile(pb.dataset.p);return}
+ const b=e.target.closest("[data-act]");if(!b){const g=e.target.closest("[data-go]");if(g)goTo(g.dataset.go);return}
  const act=b.dataset.act,card=b.closest("[data-post]"),id=card?+card.dataset.post:null,p=id?P.get(id):null;
  if(act==="like"&&p){
   if(myLikes.has(id)){myLikes.delete(id);p.lc--;refreshCard(id);await sb.from("likes").delete().eq("post_id",id).eq("user_id",me.id)}
@@ -661,11 +707,12 @@ document.addEventListener("click",async e=>{
   if(!confirm(t("confirm_del")))return;
   const r=await sb.from("posts").delete().eq("id",id);
   if(!r.error){const path=stripStorage(p.media_url);if(path)sb.storage.from("media").remove([path]).then(()=>{});
-   feedIds=feedIds.filter(x=>x!==id);savedIds=savedIds.filter(x=>x!==id);P.delete(id);renderFeed();renderSaved()}
+   feedIds=feedIds.filter(x=>x!==id);savedIds=savedIds.filter(x=>x!==id);if(pf&&pf.ids){pf.ids=pf.ids.filter(x=>x!==id);if(pf.counts?.posts)pf.counts.posts--}P.delete(id);renderFeed();renderSaved();renderProfile();if(tab==="post")location.hash="#home"}
  }else if(act==="follow"){toggleFollow(b.dataset.id)}
- else if(act==="dm"){$("dView").close();if(location.hash==="#msg")openChat(b.dataset.id);else{pendingChat=b.dataset.id;location.hash="#msg"}}
- else if(act==="editme"){$("dView").close();openMe()}
+ else if(act==="dm"){if(location.hash==="#msg")openChat(b.dataset.id);else{pendingChat=b.dataset.id;location.hash="#msg"}}
+ else if(act==="editme"){openMe()}
  else if(act==="chat"){openChat(b.dataset.id)}
+  else if(act==="pfmore"&&pf){pf.limit+=20;loadProfilePosts()}
 });
 document.addEventListener("submit",async e=>{
  const f=e.target.closest(".cf");if(!f)return;e.preventDefault();
@@ -676,15 +723,19 @@ document.addEventListener("submit",async e=>{
 
 /* ---------- POSTING + FOTO/VIDEO ---------- */
 function clearPending(){if(pending?.url)URL.revokeObjectURL(pending.url);pending=null;$("prev").hidden=true;$("prev").innerHTML="";$("pFile").value=""}
-$("pFile").onchange=e=>{
- const f=e.target.files[0];$("perr").textContent="";if(!f)return;
+const MAXSEC=45;
+function videoDur(f){return new Promise(ok=>{const v=document.createElement("video"),u=URL.createObjectURL(f);const done=d=>{URL.revokeObjectURL(u);v.removeAttribute("src");ok(d)};v.preload="metadata";v.onloadedmetadata=()=>done(v.duration);v.onerror=()=>done(NaN);setTimeout(()=>done(NaN),5000);v.src=u})}
+async function acceptFile(f,o={}){
+ const err=$("perr");err.textContent="";if(!f)return;
  const vid=f.type.startsWith("video/"),img=f.type.startsWith("image/");
- if(!vid&&!img){$("pFile").value="";return $("perr").textContent=t("err_type")}
- if(vid&&f.size>MAXVID){$("pFile").value="";return $("perr").textContent=t("err_big")}
+ if(!vid&&!img){$("pFile").value="";return err.textContent=t("err_type")}
+ if(vid&&f.size>MAXVID){$("pFile").value="";return err.textContent=t("err_big")}
+ if(vid&&o.cam&&!o.known){const d=await videoDur(f);if(Number.isFinite(d)&&d>MAXSEC+1)return err.textContent=t("cam_long")}
  clearPending();pending={file:f,vid,url:URL.createObjectURL(f)};
  $("prev").innerHTML=(vid?`<video src="${pending.url}" controls playsinline preload="metadata"></video>`:`<img src="${pending.url}" alt="">`)+`<button class="btn s o" type="button" id="prevX">${t("remove")}</button>`;
  $("prev").hidden=false;$("prevX").onclick=clearPending;
-};
+}
+$("pFile").onchange=e=>acceptFile(e.target.files[0]);
 $("pickBtn").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("pFile").click()}};
 async function imgBlob(file,max=1600){
  let bm;try{bm=await createImageBitmap(file,{imageOrientation:"from-image"})}catch(e){bm=await createImageBitmap(file)}
@@ -726,30 +777,125 @@ async function toggleFollow(id){
  if(following.has(id)){const r=await sb.from("follows").delete().eq("follower_id",me.id).eq("following_id",id);if(r.error)err=r.error;else following.delete(id)}
  else{const r=await sb.from("follows").insert({following_id:id});if(r.error&&r.error.code!=="23505")err=r.error;else following.add(id)}
  renderAlumni();renderMsgs();renderNotif();
- if($("dView").open){await showProfile(id);if(err)$("vErr").textContent=t("err_follow")+" ("+(err.message||err.code)+")"}
- else if(err)toast(t("err_follow"));
+ if(err)toast(t("err_follow")+" ("+(err.message||err.code)+")");
+  refreshProfileFollows();
 }
 let toastT=null;
 function toast(m){const e=$("toast");e.textContent=m;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,4500)}
+/* ---------- NOTIFIKASI ---------- */
+function updateNBadge(){const n=notifs.filter(x=>!x.read_at&&I18N.id["nt_"+x.type]).length,b=$("nbdg");b.hidden=!n;b.textContent=n>99?"99+":n}
+async function loadNotifs(){
+ if(!me)return;
+ const {data,error}=await sb.from("notifications").select("*").eq("user_id",me.id).order("created_at",{ascending:false}).limit(120);
+ notifOk=!error;if(!error)notifs=data||[];
+ updateNBadge();renderNotif();
+}
+function markNotifsRead(){
+ const un=notifs.filter(n=>!n.read_at);if(!un.length)return;
+ const now=new Date().toISOString();
+ un.forEach(n=>{nfresh.add(n.id);n.read_at=now});
+ updateNBadge();renderNotif();
+ sb.from("notifications").update({read_at:now}).eq("user_id",me.id).in("id",un.map(n=>n.id)).then(()=>{});
+}
+function nTpl(type,cnt){const k="nt_"+type+(cnt>1?"_m":"");return t(I18N.id[k]?k:"nt_"+type,{n:"@@N@@",m:cnt-1})}
+function groupNotifs(){
+ const out=[],likes=new Map();
+ for(const n of notifs){
+  if(n.type==="like_post"||n.type==="like_comment"){
+   const key=n.type+":"+(n.type==="like_post"?n.post_id:n.comment_id);let g=likes.get(key);
+   if(!g){g={...n,actors:[],unread:false};likes.set(key,g);out.push(g)}
+   g.actors.push(n.actor_id);if(!n.read_at||nfresh.has(n.id))g.unread=true;
+  }else out.push({...n,actors:[n.actor_id],unread:!n.read_at||nfresh.has(n.id)});
+ }
+ return out;
+}
 function renderNotif(){
  if(!me)return;
- const ids=[...followers].sort((a,b)=>(followTimes[b]||"")>(followTimes[a]||"")?1:-1);
- const pend=ids.filter(i=>!following.has(i)).length,nb=$("nbdg");nb.hidden=!pend;nb.textContent=pend;
- $("notifList").innerHTML=ids.slice(0,60).map(id=>{const u=byId[id];if(!u)return "";const f=following.has(id);
-  return `<div class="box row${f?"":" new"}"><button class="who" data-p="${id}">${avatar(u)}</button><span class="tx"><b>${esc(u.name)}</b><small class="meta">${t("notif_follow")} · ${ago(followTimes[id]||Date.now())}</small></span>${f?`<button class="btn s b" data-act="dm" data-id="${id}">${t("send_dm")}</button>`:`<button class="btn s p" data-act="follow" data-id="${id}">${t("follow_back")}</button>`}</div>`}).join("")||`<p>${t("notif_none")}</p>`;
+ const box=$("notifList");
+ if(!notifOk){box.innerHTML=`<p>${t("err_notif")}</p>`;return}
+ box.innerHTML=groupNotifs().map(g=>{
+  const u=byId[g.actor_id];if(!u||!I18N.id["nt_"+g.type])return "";
+  const html=esc(nTpl(g.type,g.actors.length)).replace("@@N@@",()=>`<strong>${esc(u.name)}</strong>`);
+  const isF=g.type==="follow",go=isF?"u:"+u.kode:"post:"+g.post_id;
+  const act=isF?(following.has(g.actor_id)?`<button class="btn s b" data-act="dm" data-id="${g.actor_id}">${t("send_dm")}</button>`:`<button class="btn s p" data-act="follow" data-id="${g.actor_id}">${t("follow_back")}</button>`):"";
+  const hl=g.unread||(isF&&!following.has(g.actor_id));
+  return `<div class="box row go${hl?" new":""}" role="link" tabindex="0" data-go="${esc(go)}"><button class="who" data-p="${g.actor_id}" aria-label="${esc(u.name)}">${avatar(u)}</button><span class="tx"><span class="nt">${html}</span>${g.snippet?`<small class="meta">${esc(g.snippet)}</small>`:""}<small class="meta">${ago(g.created_at)}</small></span>${act}</div>`;
+ }).join("")||`<p>${t("notif_none")}</p>`;
 }
-async function showProfile(id){
- const u=byId[id];if(!u||!me)return;viewId=id;const isMe=id===me.id;
- $("vAv").innerHTML=u.photo_url?`<img src="${esc(u.photo_url)}" alt="">`:esc(u.name[0]);
- $("vName").textContent=u.name;$("vJob").textContent=u.job||"";
- $("vBio").textContent=u.bio||(u.job?"":t("no_prof"));
- $("vFlag").textContent=!isMe&&followers.has(id)?t("follows_you"):"";
- $("vAct").innerHTML=isMe?`<button class="btn s p" data-act="editme">${t("edit_profile")}</button>`:
-  `<button class="btn s${following.has(id)?"":" p"}" data-act="follow" data-id="${id}">${t(following.has(id)?"following_btn":followers.has(id)?"follow_back":"follow")}</button>`+
-  (mutual(id)?`<button class="btn s b" data-act="dm" data-id="${id}">${t("send_dm")}</button>`:`<small class="meta">${t(following.has(id)?"waiting":"dm_locked")}</small>`);
- $("vCnt").textContent="";$("vErr").textContent="";if(!$("dView").open)$("dView").showModal();
- const [a,b]=await Promise.all([sb.from("follows").select("*",{count:"exact",head:true}).eq("following_id",id),sb.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",id)]);
- if(viewId===id)$("vCnt").innerHTML=`<b>${a.count??0}</b> ${t("n_followers")} · <b>${b.count??0}</b> ${t("n_following")}`;
+function goTo(g){const [k,v]=String(g).split(":");if(k==="u")location.hash="#u-"+v;else if(k==="post")location.hash="#post-"+v}
+document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;const g=e.target.closest?.("[data-go]");if(g&&e.target===g)goTo(g.dataset.go)});
+
+/* ---------- HALAMAN PROFIL ---------- */
+function showProfile(id){const u=byId[id];if(u)location.hash="#u-"+u.kode}
+$("pfBack").onclick=$("postBack").onclick=()=>{if(history.length>1)history.back();else location.hash="#home"};
+function userRow(id){
+ const u=byId[id];if(!u)return "";
+ return `<div class="box row"><button class="who" data-p="${id}" style="flex:1;min-width:0">${avatar(u)}<span><b>${esc(u.name)}</b><small class="meta">${esc(u.job||"")}</small></span></button>${id===me.id?"":`<button class="btn s${following.has(id)?"":" p"}" data-act="follow" data-id="${id}">${t(following.has(id)?"following_btn":followers.has(id)?"follow_back":"follow")}</button>`}</div>`;
+}
+function renderProfile(){
+ if(!pf||!me)return;const u=byId[pf.id];if(!u)return;
+ const id=pf.id,isMe=id===me.id,c=pf.counts||{},num=v=>v??"–";
+ $("pfHead").innerHTML=
+  `<div class="av xl">${u.photo_url?`<img src="${esc(u.photo_url)}" alt="">`:esc(u.name[0])}</div><h3>${esc(u.name)}</h3>`+
+  (u.job?`<p style="font-weight:700;margin:4px 0">${esc(u.job)}</p>`:"")+
+  (!isMe&&followers.has(id)?`<p class="meta" style="margin:0 0 6px">${t("follows_you")}</p>`:"")+
+  `<p class="bio">${esc(u.bio||(u.job?"":t("no_prof")))}</p>`+
+  `<div class="stats"><button data-ptab="posts"><b>${num(c.posts)}</b> ${t("n_posts")}</button><button data-ptab="followers"><b>${num(c.followers)}</b> ${t("n_followers")}</button><button data-ptab="following"><b>${num(c.following)}</b> ${t("n_following")}</button></div>`+
+  `<div class="pa">`+(isMe?`<button class="btn s p" data-act="editme">${t("edit_profile")}</button>`:
+   `<button class="btn s${following.has(id)?"":" p"}" data-act="follow" data-id="${id}">${t(following.has(id)?"following_btn":followers.has(id)?"follow_back":"follow")}</button>`+
+   (mutual(id)?`<button class="btn s b" data-act="dm" data-id="${id}">${t("send_dm")}</button>`:`<small class="meta">${t(following.has(id)?"waiting":"dm_locked")}</small>`))+`</div>`;
+ $("pfTabs").innerHTML=["posts","followers","following"].map(k=>`<button data-ptab="${k}" aria-pressed="${pf.tab===k}">${t("ptab_"+k)}</button>`).join("");
+ const body=$("pfBody");
+ if(pf.tab==="posts"){
+  if(pf.ids===null)body.innerHTML=`<p class="meta">${t("wait")}</p>`;
+  else{fillList(body,pf.ids,"no_posts_user");if(pf.more)body.insertAdjacentHTML("beforeend",`<div style="text-align:center"><button class="btn" data-act="pfmore">${t("more")}</button></div>`)}
+ }else{
+  const l=pf.tab==="followers"?pf.followersL:pf.followingL;
+  body.innerHTML=l===null?`<p class="meta">${t("wait")}</p>`:l.map(userRow).join("")||`<p>${t(pf.tab==="followers"?"no_followers":"no_following")}</p>`;
+ }
+}
+async function loadProfilePosts(){
+ const id=pf.id,lim=pf.limit;
+ const {data}=await sb.from("posts").select("*,likes(count),comments(count)").eq("user_id",id).order("created_at",{ascending:false}).limit(lim);
+ if(!pf||pf.id!==id)return;
+ const list=(data||[]).map(norm);pf.ids=list.map(p=>p.id);pf.more=list.length===lim;
+ await hydrate(pf.ids);if(pf&&pf.id===id)renderProfile();
+}
+async function loadProfileCounts(){
+ const id=pf.id,q=col=>sb.from("follows").select("*",{count:"exact",head:true}).eq(col,id);
+ const [a,b,c]=await Promise.all([q("following_id"),q("follower_id"),sb.from("posts").select("*",{count:"exact",head:true}).eq("user_id",id)]);
+ if(!pf||pf.id!==id)return;
+ pf.counts={followers:a.count??0,following:b.count??0,posts:c.count??0};renderProfile();
+}
+async function loadProfileList(which){
+ const id=pf.id,fw=which==="followers",col=fw?"follower_id":"following_id",key=fw?"following_id":"follower_id";
+ const {data}=await sb.from("follows").select(col+",created_at").eq(key,id).order("created_at",{ascending:false}).limit(300);
+ if(!pf||pf.id!==id)return;
+ pf[fw?"followersL":"followingL"]=(data||[]).map(r=>r[col]);
+}
+function setPTab(k){
+ if(!pf)return;pf.tab=k;renderProfile();
+ if(k!=="posts"&&pf[k==="followers"?"followersL":"followingL"]===null)loadProfileList(k).then(renderProfile);
+}
+function refreshProfileFollows(){
+ if(tab!=="profile"||!pf)return;
+ pf.followersL=pf.followingL=null;renderProfile();loadProfileCounts();
+ if(pf.tab!=="posts")loadProfileList(pf.tab).then(renderProfile);
+}
+async function openProfilePage(kode){
+ const u=users.find(x=>x.kode===kode);
+ if(!u){pf=null;$("pfHead").innerHTML=`<p>${t("no_user")}</p>`;$("pfTabs").innerHTML="";$("pfBody").innerHTML="";return}
+ pf={id:u.id,tab:"posts",counts:{},ids:null,more:false,limit:20,followersL:null,followingL:null};
+ renderProfile();loadProfilePosts();loadProfileCounts();
+}
+
+/* ---------- HALAMAN SATU POSTINGAN (dari notifikasi) ---------- */
+async function openPostPage(id){
+ const box=$("onePost");box.innerHTML=`<p class="meta">${t("wait")}</p>`;
+ const {data}=await sb.from("posts").select("*,likes(count),comments(count)").eq("id",id).maybeSingle();
+ if(location.hash!=="#post-"+id)return;
+ if(!data){box.innerHTML=`<p>${t("post_gone")}</p>`;return}
+ norm(data);await hydrate([id]);postOpenId=id;openCm.add(id);fillList(box,[id],"post_gone");
 }
 
 /* ---------- PESAN (DM) ---------- */
@@ -800,11 +946,15 @@ function startRealtime(){
  if(chan)sb.removeChannel(chan);
  chan=sb.channel("dm-"+me.id).on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:`receiver_id=eq.${me.id}`},()=>{
   if(chatWith)loadChat(chatWith,true);loadConvos().then(()=>{if(!chatWith)renderMsgs()});
- }).on("postgres_changes",{event:"INSERT",schema:"public",table:"follows",filter:`following_id=eq.${me.id}`},async ev=>{
-  await loadFollows();renderAlumni();renderMsgs();const u=byId[ev.new?.follower_id];if(u)toast(u.name+" "+t("notif_follow"));if($("dView").open&&viewId)showProfile(viewId);
- }).subscribe();
+ }).on("postgres_changes",{event:"INSERT",schema:"public",table:"follows",filter:`following_id=eq.${me.id}`},async()=>{
+   await loadFollows();renderAlumni();renderMsgs();refreshProfileFollows();
+  }).on("postgres_changes",{event:"INSERT",schema:"public",table:"notifications",filter:`user_id=eq.${me.id}`},async ev=>{
+   await loadNotifs();
+   if(tab==="notif")markNotifsRead();
+   else{const n=ev.new,u=byId[n?.actor_id];if(u&&I18N.id["nt_"+n.type])toast(nTpl(n.type,1).replace("@@N@@",()=>u.name))}
+  }).subscribe();
  clearInterval(pollT);
- pollT=setInterval(()=>{if(document.hidden||!me)return;loadFollows();loadConvos().then(()=>{if(chatWith)loadChat(chatWith,true);else if(tab==="msg")renderMsgs()})},20000);
+ pollT=setInterval(()=>{if(document.hidden||!me)return;loadFollows();loadNotifs().then(()=>{if(tab==="notif")markNotifsRead()});loadConvos().then(()=>{if(chatWith)loadChat(chatWith,true);else if(tab==="msg")renderMsgs()})},20000);
 }
 
 /* ---------- AKUN ---------- */
@@ -853,6 +1003,80 @@ $("bSave").onclick=async()=>{
  if(error)return $("berr").textContent=t("err_save");
  me.accent=a;me.bg=b;applyBrand({accent:a,bg:b});saveLocal();brandSaved=true;$("dBrand").close();
 };
+
+/* ---------- KAMERA ---------- */
+let cam={stream:null,audio:null,rec:null,chunks:[],timer:null,secs:0,facing:"environment",mode:"photo"};
+const mmss=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+function camRelease(){
+ clearInterval(cam.timer);
+ if(cam.rec){cam.rec.ondataavailable=null;cam.rec.onstop=null;if(cam.rec.state!=="inactive"){try{cam.rec.stop()}catch(e){}}}
+ cam.rec=null;cam.chunks=[];
+ [cam.stream,cam.audio].forEach(s=>s&&s.getTracks().forEach(x=>x.stop()));cam.stream=cam.audio=null;
+ $("camVid").srcObject=null;$("camTimer").hidden=true;
+}
+function camUI(){
+ const rec=!!(cam.rec&&cam.rec.state==="recording");
+ document.querySelectorAll("#camModes [data-m]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.m===cam.mode);b.disabled=rec});
+ $("camFlip").disabled=rec;$("camTimer").hidden=!rec;
+ $("camShot").textContent=cam.mode==="photo"?t("cam_shoot"):rec?t("cam_stop"):t("cam_rec");
+ $("camShot").classList.toggle("p",!rec);$("camShot").classList.toggle("o",rec);
+}
+function camFail(key,keep){$("camErr").textContent=t(key);$("camFb").hidden=false;$("camShot").disabled=!keep;camUI()}
+async function camStart(){
+ camRelease();$("camErr").textContent="";
+ try{
+  const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:cam.facing},width:{ideal:1280},height:{ideal:720}},audio:false});
+  if(!$("dCam").open){s.getTracks().forEach(x=>x.stop());return}
+  cam.stream=s;const v=$("camVid");v.srcObject=s;v.style.transform=cam.facing==="user"?"scaleX(-1)":"none";await v.play().catch(()=>{});
+  $("camFb").hidden=true;$("camShot").disabled=false;camUI();
+ }catch(e){camFail("cam_denied")}
+}
+$("camBtn").onclick=()=>{
+ cam.mode="photo";$("camFb").hidden=true;$("camErr").textContent="";$("dCam").showModal();
+ if(!navigator.mediaDevices?.getUserMedia)return camFail("cam_denied");
+ camUI();camStart();
+};
+$("dCam").addEventListener("close",camRelease);
+$("camModes").onclick=e=>{const b=e.target.closest("[data-m]");if(!b||b.disabled)return;cam.mode=b.dataset.m;$("camErr").textContent="";camUI()};
+$("camFlip").onclick=()=>{cam.facing=cam.facing==="user"?"environment":"user";camStart()};
+function camSnap(){
+ const v=$("camVid");if(!v.videoWidth)return;
+ const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);
+ c.toBlob(b=>{if(!b)return;$("dCam").close();acceptFile(new File([b],"kamera.jpg",{type:"image/jpeg"}),{cam:true,known:true})},"image/jpeg",.9);
+}
+async function camRecord(){
+ if(!cam.stream)return;
+ const types=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm","video/mp4"];
+ const mt=window.MediaRecorder&&types.find(x=>MediaRecorder.isTypeSupported(x));
+ if(!mt)return camFail("cam_norec",true);
+ const tracks=[...cam.stream.getVideoTracks()];
+ try{cam.audio=await navigator.mediaDevices.getUserMedia({audio:true});tracks.push(...cam.audio.getAudioTracks())}catch(e){cam.audio=null}
+ if(!$("dCam").open||!cam.stream){camRelease();return}
+ const base=mt.startsWith("video/mp4")?"video/mp4":"video/webm";
+ let rec;try{rec=new MediaRecorder(new MediaStream(tracks),{mimeType:mt,videoBitsPerSecond:2500000})}catch(e){return camFail("cam_norec",true)}
+ cam.rec=rec;cam.chunks=[];cam.secs=0;
+ rec.ondataavailable=e=>{if(e.data&&e.data.size)cam.chunks.push(e.data)};
+ rec.onstop=()=>{
+  clearInterval(cam.timer);
+  const blob=new Blob(cam.chunks,{type:base});
+  if(cam.audio)cam.audio.getTracks().forEach(x=>x.stop());cam.audio=null;cam.rec=null;cam.chunks=[];
+  if(blob.size>MAXVID){camUI();$("camErr").textContent=t("err_big");return}
+  if(!blob.size){camUI();return}
+  $("dCam").close();
+  acceptFile(new File([blob],"kamera."+(base==="video/mp4"?"mp4":"webm"),{type:base}),{cam:true,known:true});
+ };
+ rec.start(1000);
+ $("camTimer").textContent=mmss(0)+" / "+mmss(MAXSEC);
+ cam.timer=setInterval(()=>{cam.secs++;$("camTimer").textContent=mmss(cam.secs)+" / "+mmss(MAXSEC);if(cam.secs>=MAXSEC&&cam.rec&&cam.rec.state==="recording")cam.rec.stop()},1000);
+ camUI();
+}
+$("camShot").onclick=()=>{
+ if(cam.mode==="photo")return camSnap();
+ if(cam.rec&&cam.rec.state==="recording"){cam.rec.stop();return}
+ camRecord();
+};
+for(const id of ["camPhotoIn","camVideoIn"])$(id).onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;$("dCam").close();acceptFile(f,{cam:true})};
+$("seeProf").onclick=()=>{$("dMe").close();location.hash="#u-"+me.kode};
 
 /* ---------- MULAI ---------- */
 (async function boot(){
