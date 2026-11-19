@@ -1,0 +1,482 @@
+[
+ {
+  "kode": "a001",
+  "name": "Abdul Aziz",
+  "ttl": "Tasikmalaya, 22 November 2004"
+ },
+ {
+  "kode": "a002",
+  "name": "Achmad Suherman",
+  "ttl": "Bogor, 21 Juni 2005"
+ },
+ {
+  "kode": "a003",
+  "name": "Achmed Gilang Falluja",
+  "ttl": "Banda Aceh, 30 September 2004"
+ },
+ {
+  "kode": "a004",
+  "name": "Adelia Septiani",
+  "ttl": "Bogor, 13 September 2004"
+ },
+ {
+  "kode": "a005",
+  "name": "Agil Nasuwa Wiguna",
+  "ttl": "Tegal, 14 April 2005"
+ },
+ {
+  "kode": "a006",
+  "name": "Agna Fauziah",
+  "ttl": "Bogor, 28 Desember 2004"
+ },
+ {
+  "kode": "a007",
+  "name": "Ahmad Bagus Baidullah",
+  "ttl": "Bogor, 05 Desember 2005"
+ },
+ {
+  "kode": "a008",
+  "name": "Ainur Raqib Jauhar",
+  "ttl": "Bekasi, 10 April 2004"
+ },
+ {
+  "kode": "a009",
+  "name": "Alya Aulia",
+  "ttl": "Bogor, 24 November 2004"
+ },
+ {
+  "kode": "a010",
+  "name": "Anggun Luna Maya",
+  "ttl": "Bogor, 28 Juni 2004"
+ },
+ {
+  "kode": "a011",
+  "name": "Anisa Agustina",
+  "ttl": "Kota Bogor, 09 Agustus 2005"
+ },
+ {
+  "kode": "a012",
+  "name": "Anjasmara",
+  "ttl": "Jakarta, 08 Oktober 2003"
+ },
+ {
+  "kode": "a013",
+  "name": "Annisa Siffa Fadhliah",
+  "ttl": "Jakarta, 18 Desember 2003"
+ },
+ {
+  "kode": "a014",
+  "name": "Asep Awalludin",
+  "ttl": "Bogor, 20 Juli 2005"
+ },
+ {
+  "kode": "a015",
+  "name": "Asni Puspasari",
+  "ttl": "Bogor, 28 Juni 2005"
+ },
+ {
+  "kode": "a016",
+  "name": "Ayunda Rahmadani Dwi Prastica",
+  "ttl": "Jakarta, 30 Oktober 2004"
+ },
+ {
+  "kode": "a017",
+  "name": "Azka Maulidi",
+  "ttl": "Tangerang, 07 Mei 2005"
+ },
+ {
+  "kode": "a018",
+  "name": "Bilqies Sulaiman",
+  "ttl": "Cianjur, 10 Januari 2004"
+ },
+ {
+  "kode": "a019",
+  "name": "Busyron Nadzir",
+  "ttl": "Bogor, 30 Juni 2004"
+ },
+ {
+  "kode": "a020",
+  "name": "Chandra Nur Hafidz Fathullah",
+  "ttl": "Bogor, 15 Mei 2005"
+ },
+ {
+  "kode": "a021",
+  "name": "Chiekal Gustian",
+  "ttl": "Karawang, 11 Agustus 2005"
+ },
+ {
+  "kode": "a022",
+  "name": "Davina Nur Maulidia",
+  "ttl": "Bogor, 27 Mei 2005"
+ },
+ {
+  "kode": "a023",
+  "name": "Debora Meilina",
+  "ttl": "Bogor, 10 Mei 2004"
+ },
+ {
+  "kode": "a024",
+  "name": "Dian Kemala Rizki",
+  "ttl": "Jakarta, 22 Juni 2004"
+ },
+ {
+  "kode": "a025",
+  "name": "Ditta Indah Sari",
+  "ttl": "Bogor, 15 Januari 2005"
+ },
+ {
+  "kode": "a026",
+  "name": "Elsa Al-Baninah",
+  "ttl": "Jakarta, 29 September 2004"
+ },
+ {
+  "kode": "a027",
+  "name": "Fahri Enggar Saputra",
+  "ttl": "Cilacap, 18 Agustus 2004"
+ },
+ {
+  "kode": "a028",
+  "name": "Faiz Akbar Cahyadi",
+  "ttl": "Jakarta, 10 Maret 2005"
+ },
+ {
+  "kode": "a029",
+  "name": "Fatha Kamila",
+  "ttl": "Jakarta, 01 Agustus 2005"
+ },
+ {
+  "kode": "a030",
+  "name": "Fatiha Fitry",
+  "ttl": "Bogor, 01 Desember 2003"
+ },
+ {
+  "kode": "a031",
+  "name": "Fifi Aleyda Putri",
+  "ttl": "Jakarta, 29 September 2003"
+ },
+ {
+  "kode": "a032",
+  "name": "Fikri Maulana Ikhsan",
+  "ttl": "Jakarta, 02 Januari 2004"
+ },
+ {
+  "kode": "a033",
+  "name": "Fikri Ramdhani",
+  "ttl": "Bogor, 30 Juli 2005"
+ },
+ {
+  "kode": "a034",
+  "name": "Gani Nurawalia",
+  "ttl": "Bogor, 31 Maret 2004"
+ },
+ {
+  "kode": "a035",
+  "name": "Gifar Mubarok",
+  "ttl": "Jakarta, 27 Agustus 2004"
+ },
+ {
+  "kode": "a036",
+  "name": "Haftah Fawziah",
+  "ttl": "Sukabumi, 04 Agustus 2003"
+ },
+ {
+  "kode": "a037",
+  "name": "Herninda Rafelia",
+  "ttl": "Bogor, 03 Maret 2005"
+ },
+ {
+  "kode": "a038",
+  "name": "Huwaida Muhsinah",
+  "ttl": "Bogor, 05 September 2005"
+ },
+ {
+  "kode": "a039",
+  "name": "Icha Mukhlisah",
+  "ttl": "Brebes, 09 April 2004"
+ },
+ {
+  "kode": "a040",
+  "name": "Jovinka Salwa Khalisha",
+  "ttl": "Bekasi, 08 Maret 2004"
+ },
+ {
+  "kode": "a041",
+  "name": "Khusni Faujiah Rahmawati",
+  "ttl": "Bekasi, 22 Agustus 2004"
+ },
+ {
+  "kode": "a042",
+  "name": "M Rafly Adriansyah",
+  "ttl": "Jakarta, 05 Juli 2005"
+ },
+ {
+  "kode": "a043",
+  "name": "M. Auril Al-Fareza Prayoga",
+  "ttl": "Bogor, 31 Juli 2005"
+ },
+ {
+  "kode": "a044",
+  "name": "Maniar Gita Pawestri",
+  "ttl": "Bogor, 17 Mei 2005"
+ },
+ {
+  "kode": "a045",
+  "name": "Maulana Akbar",
+  "ttl": "Bogor, 09 Juli 2004"
+ },
+ {
+  "kode": "a046",
+  "name": "Maulana Azmi Haryadi",
+  "ttl": "Jakarta, 06 Februari 2005"
+ },
+ {
+  "kode": "a047",
+  "name": "Mayyada Sabrina",
+  "ttl": "Depok, 20 April 2005"
+ },
+ {
+  "kode": "a048",
+  "name": "Melani Agustin",
+  "ttl": "Bogor, 26 Mei 2004"
+ },
+ {
+  "kode": "a049",
+  "name": "Mitha Yulia Raihani",
+  "ttl": "Bogor, 04 Juli 2003"
+ },
+ {
+  "kode": "a050",
+  "name": "Muhamad Abdul Muhsin",
+  "ttl": "Bogor, 28 November 2004"
+ },
+ {
+  "kode": "a051",
+  "name": "Muhamad Salman Al Fauzi",
+  "ttl": "Bogor, 17 September 2005"
+ },
+ {
+  "kode": "a052",
+  "name": "Muhammad Al-Fatih",
+  "ttl": "Jakarta, 29 Mei 2004"
+ },
+ {
+  "kode": "a053",
+  "name": "Muhammad Faqieh Rachmat",
+  "ttl": "Jakarta, 09 April 2005"
+ },
+ {
+  "kode": "a054",
+  "name": "Muhammad Fitrah Hariyadi",
+  "ttl": "Bogor, 20 November 2004"
+ },
+ {
+  "kode": "a055",
+  "name": "Muhammad Ilyasa Nughraha",
+  "ttl": "Bogor, 12 Juli 2004"
+ },
+ {
+  "kode": "a056",
+  "name": "Muhammad Miftah Ramadhan",
+  "ttl": "Depok, 22 Oktober 2004"
+ },
+ {
+  "kode": "a057",
+  "name": "Muhammad Rifqi Fakhrudin",
+  "ttl": "Bogor, 04 Desember 2004"
+ },
+ {
+  "kode": "a058",
+  "name": "Muhammad Sihab",
+  "ttl": "Garut, 09 Oktober 2004"
+ },
+ {
+  "kode": "a059",
+  "name": "Muhammad Tri Arrazi",
+  "ttl": "Jakarta, 19 Januari 2004"
+ },
+ {
+  "kode": "a060",
+  "name": "Muhandis Yahya Ayasi Marasabessy",
+  "ttl": "Bogor, 11 Juni 2004"
+ },
+ {
+  "kode": "a061",
+  "name": "Nadhila Putri Purwanti",
+  "ttl": "Bekasi, 28 November 2005"
+ },
+ {
+  "kode": "a062",
+  "name": "Naila Cahya Mulyani",
+  "ttl": "Bogor, 21 Maret 2005"
+ },
+ {
+  "kode": "a063",
+  "name": "Najwa Aprina Anwar",
+  "ttl": "Bogor, 04 April 2005"
+ },
+ {
+  "kode": "a064",
+  "name": "Najwa Safira",
+  "ttl": "Tangerang, 04 Mei 2004"
+ },
+ {
+  "kode": "a065",
+  "name": "Nasywa Nur Aulia",
+  "ttl": "Bogor, 01 Desember 2004"
+ },
+ {
+  "kode": "a066",
+  "name": "Nazwa Aulia",
+  "ttl": "Bogor, 11 Juni 2005"
+ },
+ {
+  "kode": "a067",
+  "name": "Nazwa Shaura Arabella Kipuw",
+  "ttl": "Sorong, 06 Oktober 2004"
+ },
+ {
+  "kode": "a068",
+  "name": "Nisa Aulia Ayu Rizki",
+  "ttl": "Jakarta, 18 Juni 2004"
+ },
+ {
+  "kode": "a069",
+  "name": "Nisa Handayani Nasution",
+  "ttl": "Bogor, 08 Agustus 2006"
+ },
+ {
+  "kode": "a070",
+  "name": "Noval Andriano",
+  "ttl": "Jakarta, 21 Oktober 2004"
+ },
+ {
+  "kode": "a071",
+  "name": "Nur Hidayah Rangkuti",
+  "ttl": "Bogor, 19 Januari 2005"
+ },
+ {
+  "kode": "a072",
+  "name": "Nur Julia Rahmah",
+  "ttl": "Bogor, 07 Juli 2005"
+ },
+ {
+  "kode": "a073",
+  "name": "Nur Syahwa Al Fitriyana",
+  "ttl": "Bogor, 13 November 2004"
+ },
+ {
+  "kode": "a074",
+  "name": "Nur Zahra Salsabila",
+  "ttl": "Bogor, 25 Mei 2005"
+ },
+ {
+  "kode": "a075",
+  "name": "Nurul Hasanah",
+  "ttl": "Bogor, 29 Juli 2005"
+ },
+ {
+  "kode": "a076",
+  "name": "Nurul Musyarofah",
+  "ttl": "Bogor, 10 Maret 2006"
+ },
+ {
+  "kode": "a077",
+  "name": "Putri Nurul Aulia",
+  "ttl": "Bogor, 07 November 2005"
+ },
+ {
+  "kode": "a078",
+  "name": "Putri Ramadhani",
+  "ttl": "Bekasi, 11 Oktober 2005"
+ },
+ {
+  "kode": "a079",
+  "name": "Raja Habibie",
+  "ttl": "Jakarta, 01 November 2003"
+ },
+ {
+  "kode": "a080",
+  "name": "Raka Perdiansyah",
+  "ttl": "Bogor, 16 November 2004"
+ },
+ {
+  "kode": "a081",
+  "name": "Rangga Permana Putra",
+  "ttl": "Jakarta, 22 Mei 2004"
+ },
+ {
+  "kode": "a082",
+  "name": "Rizkina Nurul Hikmah",
+  "ttl": "Bogor, 15 September 2004"
+ },
+ {
+  "kode": "a083",
+  "name": "Rohim Indera Syaputra",
+  "ttl": "Jakarta, 12 September 2005"
+ },
+ {
+  "kode": "a084",
+  "name": "Rosita Fitriyana",
+  "ttl": "Tegal, 13 November 2004"
+ },
+ {
+  "kode": "a085",
+  "name": "Rusyda Hardianto",
+  "ttl": "Bogor, 21 Desember 2004"
+ },
+ {
+  "kode": "a086",
+  "name": "Salma Lathifatunnisa",
+  "ttl": "Bogor, 30 April 2005"
+ },
+ {
+  "kode": "a087",
+  "name": "Salma Rizky Aryanti",
+  "ttl": "Bogor, 16 Agustus 2005"
+ },
+ {
+  "kode": "a088",
+  "name": "Septirani Hapsari",
+  "ttl": "Tangerang, 25 September 2004"
+ },
+ {
+  "kode": "a089",
+  "name": "Siti Nashihah",
+  "ttl": "Jakarta, 12 Agustus 2005"
+ },
+ {
+  "kode": "a090",
+  "name": "Siti Nurlaelasari",
+  "ttl": "Bogor, 20 September 2004"
+ },
+ {
+  "kode": "a091",
+  "name": "Susilawati Diah Anggraeni",
+  "ttl": "Bogor, 08 Oktober 2004"
+ },
+ {
+  "kode": "a092",
+  "name": "Syahrul Ghofur",
+  "ttl": "Bogor, 03 November 2004"
+ },
+ {
+  "kode": "a093",
+  "name": "Syamsul Ma'arif",
+  "ttl": "Jakarta, 07 Juni 2004"
+ },
+ {
+  "kode": "a094",
+  "name": "Tasya Aulia Aisyah",
+  "ttl": "Bandung, 24 Oktober 2005"
+ },
+ {
+  "kode": "a095",
+  "name": "Teddy Galang Prasetyo",
+  "ttl": "Bogor, 22 September 2005"
+ },
+ {
+  "kode": "a096",
+  "name": "Wulan Yuandari",
+  "ttl": "Jakarta, 10 April 2005"
+ }
+]
